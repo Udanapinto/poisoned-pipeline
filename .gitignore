@@ -35,3 +35,14 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Nginx TLS private material
+nginx/certs/*
+!nginx/certs/.gitkeep
+
+*.key
+*.pem
+
+# VS Code
+.vscode/
+

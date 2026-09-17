@@ -1,0 +1,302 @@
+[
+    {
+        "Id": "b09e18198b2857bf212422f0f0a4ca74441dbd3dadc67899b0b6aa12c56b3840",
+        "Created": "2026-09-17T10:12:01.155142101Z",
+        "Path": "/docker-entrypoint.sh",
+        "Args": [
+            "nginx",
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 26252,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-09-17T10:12:02.423308784Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:30f1c0d78e0ad60901648be663a710bdadf19e4c10ac6782c235200619158284",
+        "ResolvConfPath": "/var/lib/docker/containers/b09e18198b2857bf212422f0f0a4ca74441dbd3dadc67899b0b6aa12c56b3840/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/b09e18198b2857bf212422f0f0a4ca74441dbd3dadc67899b0b6aa12c56b3840/hostname",
+        "HostsPath": "/var/lib/docker/containers/b09e18198b2857bf212422f0f0a4ca74441dbd3dadc67899b0b6aa12c56b3840/hosts",
+        "LogPath": "/var/lib/docker/containers/b09e18198b2857bf212422f0f0a4ca74441dbd3dadc67899b0b6aa12c56b3840/b09e18198b2857bf212422f0f0a4ca74441dbd3dadc67899b0b6aa12c56b3840-json.log",
+        "Name": "/pp-nginx",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/isuru/Projects/poisoned-pipeline/nginx/nginx.conf:/etc/nginx/nginx.conf:ro",
+                "/home/isuru/Projects/poisoned-pipeline/nginx/certs:/etc/nginx/certs:ro"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "poisoned-pipeline_control_net",
+            "PortBindings": {
+                "443/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "443"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/isuru/Projects/poisoned-pipeline/nginx/certs",
+                "Destination": "/etc/nginx/certs",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/isuru/Projects/poisoned-pipeline/nginx/nginx.conf",
+                "Destination": "/etc/nginx/nginx.conf",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "b09e18198b28",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "443/tcp": {},
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.28.0",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.8.10",
+                "NJS_RELEASE=1"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "Image": "nginx:1.28.0-alpine",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "7d65c71961374b6b856978339a2dd733ed7865150df5b4041abe0102573e1e2c",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "ctfd:service_healthy:false",
+                "com.docker.compose.image": "sha256:09ab424a8c788f8d0fe3a64429f6d19dfa526885c8609b748d0943a75dcb9f8c",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "poisoned-pipeline",
+                "com.docker.compose.project.config_files": "/home/isuru/Projects/poisoned-pipeline/compose.yml",
+                "com.docker.compose.project.working_dir": "/home/isuru/Projects/poisoned-pipeline",
+                "com.docker.compose.service": "nginx",
+                "com.docker.compose.version": "5.5.1",
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "NetworkSettings": {
+            "SandboxID": "499fa3b55c8b75a0e10287c4fa54d44b02e4e6e79f3ad0376f8dec9886021d20",
+            "SandboxKey": "/var/run/docker/netns/499fa3b55c8b",
+            "Ports": {
+                "443/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "443"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "443"
+                    }
+                ],
+                "80/tcp": null
+            },
+            "Networks": {
+                "poisoned-pipeline_control_net": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "pp-nginx",
+                        "nginx"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "1ef30734417909831879a6452facb30baaaee44c6ca9943d1d9ab57ff0ddf01c",
+                    "EndpointID": "c1e6db65ef7ac93e37baf52cc605ae9cbf87239e95062f1e3b76068cf2c80131",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.5",
+                    "MacAddress": "9e:70:b7:04:52:1e",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "pp-nginx",
+                        "nginx",
+                        "b09e18198b28"
+                    ]
+                },
+                "poisoned-pipeline_player_net": {
+                    "IPAMConfig": {
+                        "IPv4Address": "10.13.10.20"
+                    },
+                    "Links": null,
+                    "Aliases": [
+                        "pp-nginx",
+                        "nginx"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "1b53306dbca6171b7ca8d050f8bf69ddaa0b548784bc3139777d1c38eb5c7231",
+                    "EndpointID": "4123b6bfaf1bfb9a774f5bc4a2166cbfdc487d1a04397e7d2a45733ba4ac1ec1",
+                    "Gateway": "10.13.10.1",
+                    "IPAddress": "10.13.10.20",
+                    "MacAddress": "72:c9:2c:4b:9e:e7",
+                    "IPPrefixLen": 24,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "pp-nginx",
+                        "nginx",
+                        "b09e18198b28"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:09ab424a8c788f8d0fe3a64429f6d19dfa526885c8609b748d0943a75dcb9f8c",
+            "size": 2493,
+            "annotations": {
+                "com.docker.official-images.bashbrew.arch": "amd64",
+                "org.opencontainers.image.base.digest": "sha256:eb8c00e3f75d52947cbfe3cc352671e70bcb78f850be8b64e6bf9652ee8853de",
+                "org.opencontainers.image.base.name": "nginx:1.28.0-alpine-slim",
+                "org.opencontainers.image.created": "2025-10-08T23:33:51Z",
+                "org.opencontainers.image.revision": "7f1d49f6f222f7e588a9066fd53a0ce43c3466a5",
+                "org.opencontainers.image.source": "https://github.com/nginx/docker-nginx.git#7f1d49f6f222f7e588a9066fd53a0ce43c3466a5:stable/alpine",
+                "org.opencontainers.image.url": "https://hub.docker.com/_/nginx",
+                "org.opencontainers.image.version": "1.28.0-alpine"
+            },
+            "platform": {
+                "architecture": "amd64",
+                "os": "linux"
+            }
+        }
+    }
+]
