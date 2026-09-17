@@ -1,0 +1,247 @@
+[
+    {
+        "Id": "526c62b95fdd609d093913845cff53d4db6902e87f232f8e616cfbb1ea51dd76",
+        "Created": "2026-09-17T12:13:22.575273637Z",
+        "Path": "/usr/bin/entrypoint",
+        "Args": [
+            "/usr/bin/s6-svscan",
+            "/etc/s6"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 76829,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-09-17T12:13:23.745973104Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:7dff60d7ea6df9d0bdf78971cdb1350e9b7df3fda5f115c77afe12122887bd64",
+        "ResolvConfPath": "/var/lib/docker/containers/526c62b95fdd609d093913845cff53d4db6902e87f232f8e616cfbb1ea51dd76/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/526c62b95fdd609d093913845cff53d4db6902e87f232f8e616cfbb1ea51dd76/hostname",
+        "HostsPath": "/var/lib/docker/containers/526c62b95fdd609d093913845cff53d4db6902e87f232f8e616cfbb1ea51dd76/hosts",
+        "LogPath": "/var/lib/docker/containers/526c62b95fdd609d093913845cff53d4db6902e87f232f8e616cfbb1ea51dd76/526c62b95fdd609d093913845cff53d4db6902e87f232f8e616cfbb1ea51dd76-json.log",
+        "Name": "/pp-gitea",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "poisoned-pipeline_gitea_data:/data:rw"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "poisoned-pipeline_control_net",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "poisoned-pipeline_gitea_data",
+                "Source": "/var/lib/docker/volumes/poisoned-pipeline_gitea_data/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+        "Config": {
+            "Hostname": "526c62b95fdd",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "22/tcp": {},
+                "3000/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "GITEA__server__ROOT_URL=https://10.13.10.20/git/",
+                "GITEA__server__HTTP_PORT=3000",
+                "GITEA__security__INSTALL_LOCK=true",
+                "GITEA__server__DOMAIN=10.13.10.20",
+                "GITEA__service__DISABLE_REGISTRATION=true",
+                "GITEA__server__OFFLINE_MODE=true",
+                "GITEA__database__PATH=/data/gitea/gitea.db",
+                "GITEA__database__DB_TYPE=sqlite3",
+                "GITEA__server__DISABLE_SSH=true",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "USER=git",
+                "GITEA_CUSTOM=/data/gitea"
+            ],
+            "Cmd": [
+                "/usr/bin/s6-svscan",
+                "/etc/s6"
+            ],
+            "Image": "gitea/gitea:1.27.0",
+            "Volumes": {
+                "/data": {}
+            },
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/usr/bin/entrypoint"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "15f8d029ca684f69976d5478e81add5dc11ee1381d01486ccbcbaeda0c66d14a",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:7b58541345f52eda63f11f3ec3d575193e91a0934b7841a66a7ee245a66f764a",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "poisoned-pipeline",
+                "com.docker.compose.project.config_files": "/home/isuru/Projects/poisoned-pipeline/compose.yml",
+                "com.docker.compose.project.working_dir": "/home/isuru/Projects/poisoned-pipeline",
+                "com.docker.compose.service": "gitea",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "e880b928305700518f2e5211a1d0db5787c79168702d9e9b26bd6ad9a31bb4f1",
+            "SandboxKey": "/var/run/docker/netns/e880b9283057",
+            "Ports": {
+                "22/tcp": null,
+                "3000/tcp": null
+            },
+            "Networks": {
+                "poisoned-pipeline_control_net": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "pp-gitea",
+                        "gitea"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "7add63a6e6cb7d872c7bb9c462b09718a76fc3f192415ea03aa804a84018d82a",
+                    "EndpointID": "e11859aeb431367f2818f052925438a64136bceb2ce29d09fe0d0fc85b92a79e",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.2",
+                    "MacAddress": "5e:ed:0d:7d:9a:d6",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "pp-gitea",
+                        "gitea",
+                        "526c62b95fdd"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:7b58541345f52eda63f11f3ec3d575193e91a0934b7841a66a7ee245a66f764a",
+            "size": 1997,
+            "platform": {
+                "architecture": "amd64",
+                "os": "linux"
+            }
+        }
+    }
+]
