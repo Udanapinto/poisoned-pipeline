@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Operation Poisoned Pipeline
 
 IE3132 Penetration Testing CTF Play Box.
@@ -34,7 +33,3 @@ S06 - Behind the Firewall
 - Application Challenge
 - PostgreSQL
 - Kali participant container
-=======
-# poisoned-pipeline
-Pen. Test. Project
->>>>>>> 0cc1a5107a68cb1b79a0e0e6859d08ec8c951257
