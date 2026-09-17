@@ -1,0 +1,54 @@
+[
+    {
+        "Name": "poisoned-pipeline_control_net",
+        "Id": "1ef30734417909831879a6452facb30baaaee44c6ca9943d1d9ab57ff0ddf01c",
+        "Created": "2026-09-17T11:40:54.572941633+05:30",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": true,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.config-hash": "202796bdea5af1d5c84a4188222ea083e1d6e74a6f1a6a2cf8f59021e076dd4d",
+            "com.docker.compose.network": "control_net",
+            "com.docker.compose.project": "poisoned-pipeline",
+            "com.docker.compose.version": "5.5.1"
+        },
+        "Containers": {
+            "541e2bb72e60323b684fc4cfc00e85d8a56c53332fa21f4d6ca3fb5fa67a25d3": {
+                "Name": "pp-phase4-control",
+                "EndpointID": "b9ab57e35df86501ae1d177735b92ae3a83bfda6b0d33c0d0176b01816fb9a55",
+                "MacAddress": "4a:7d:47:ef:c7:1d",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.18.0.0/16": {
+                        "IPsInUse": 4,
+                        "DynamicIPsAvailable": 65532
+                    }
+                }
+            }
+        }
+    }
+]

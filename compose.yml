@@ -1,0 +1,56 @@
+name: poisoned-pipeline
+
+networks:
+
+  # ========================================================
+  # Participant-facing network
+  # ========================================================
+  player_net:
+    name: poisoned-pipeline_player_net
+    driver: bridge
+
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.13.10.0/24
+          gateway: 10.13.10.1
+
+
+  # ========================================================
+  # CTF management/control network
+  #
+  # Later:
+  # Nginx
+  # CTFd
+  # MariaDB
+  # Redis
+  # Gitea
+  # Jenkins
+  #
+  # will communicate through this network.
+  # ========================================================
+  control_net:
+    name: poisoned-pipeline_control_net
+    driver: bridge
+    internal: true
+
+
+  # ========================================================
+  # Protected internal challenge network
+  #
+  # Application Challenge: 10.13.20.1
+  # PostgreSQL:            10.13.20.10
+  #
+  # Gateway intentionally uses .254 because .1 is reserved
+  # for the Application Challenge container.
+  # ========================================================
+  internal_net:
+    name: poisoned-pipeline_internal_net
+    driver: bridge
+    internal: true
+
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.13.20.0/24
+          gateway: 10.13.20.254
