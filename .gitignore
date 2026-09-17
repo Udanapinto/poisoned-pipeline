@@ -1,0 +1,37 @@
+# Real secrets
+.env
+.env.*
+!.env.example
+
+flags.env
+*.secret
+*.secrets
+
+# Private implementation data
+private/*
+!private/build-manifest.example.yml
+
+# Certificates/private keys
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# VS Code local config
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
