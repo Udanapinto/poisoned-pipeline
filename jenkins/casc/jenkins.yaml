@@ -1,0 +1,48 @@
+jenkins:
+  systemMessage: |
+    Nexora Technologies - Internal CI/CD
+    Operation Poisoned Pipeline CTF Lab
+
+  numExecutors: 1
+  mode: NORMAL
+  quietPeriod: 0
+  slaveAgentPort: -1
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+
+        # Private administrator used only to seed/reset the lab.
+        - id: "${JENKINS_ADMIN_USER}"
+          name: "Poisoned Pipeline Administrator"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+
+        # Account recovered by the participant during S01.
+        - id: "${S01_JENKINS_USER}"
+          name: "Retired Pipeline Integration Account"
+          password: "${S01_JENKINS_PASSWORD}"
+
+  authorizationStrategy:
+    globalMatrix:
+      entries:
+
+        - user:
+            name: "${JENKINS_ADMIN_USER}"
+            permissions:
+              - "Overall/Administer"
+              - "Overall/Read"
+              - "Job/Read"
+              - "Run/Artifacts"
+
+        - user:
+            name: "${S01_JENKINS_USER}"
+            permissions:
+              - "Overall/Read"
+              - "Job/Read"
+              - "Run/Artifacts"
+
+unclassified:
+  location:
+    url: "https://10.13.10.20/jenkins/"

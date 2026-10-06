@@ -14,7 +14,7 @@ services:
   #
   # IMPORTANT:
   # - control_net only
-  # - NO host published port
+  # - NO host-published port
   # ========================================================
 
   mariadb:
@@ -35,23 +35,19 @@ services:
 
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
 
-
     command:
 
       - --character-set-server=utf8mb4
 
       - --collation-server=utf8mb4_unicode_ci
 
-
     volumes:
 
       - mariadb_data:/var/lib/mysql
 
-
     networks:
 
       - control_net
-
 
     healthcheck:
 
@@ -70,7 +66,6 @@ services:
       start_period: 20s
 
 
-
   # ========================================================
   # Redis
   #
@@ -78,7 +73,7 @@ services:
   #
   # IMPORTANT:
   # - control_net only
-  # - NO host published port
+  # - NO host-published port
   # ========================================================
 
   redis:
@@ -88,7 +83,6 @@ services:
     container_name: pp-redis
 
     restart: unless-stopped
-
 
     command:
 
@@ -104,16 +98,13 @@ services:
 
       - "1"
 
-
     volumes:
 
       - redis_data:/data
 
-
     networks:
 
       - control_net
-
 
     healthcheck:
 
@@ -129,7 +120,6 @@ services:
       timeout: 5s
 
       retries: 10
-
 
 
   # ========================================================
@@ -151,7 +141,6 @@ services:
 
     restart: unless-stopped
 
-
     depends_on:
 
       mariadb:
@@ -161,7 +150,6 @@ services:
       redis:
 
         condition: service_healthy
-
 
     environment:
 
@@ -178,23 +166,19 @@ services:
 
       WORKERS: "2"
 
-
     volumes:
 
       - ctfd_uploads:/var/uploads
 
       - ctfd_logs:/var/log/CTFd
 
-
     expose:
 
       - "8000"
 
-
     networks:
 
       - control_net
-
 
     healthcheck:
 
@@ -212,6 +196,7 @@ services:
 
       start_period: 30s
 
+
   # ========================================================
   # Gitea
   #
@@ -219,9 +204,9 @@ services:
   #
   # IMPORTANT:
   # - control_net only
-  # - no host-published TCP 3000
+  # - NO host-published TCP 3000
   # - participant access only through Nginx
-  # - SQLite is sufficient for the controlled CTF service
+  # - SQLite is sufficient for this controlled CTF service
   # ========================================================
 
   gitea:
@@ -232,13 +217,11 @@ services:
 
     restart: unless-stopped
 
-
     environment:
 
       GITEA__database__DB_TYPE: sqlite3
 
       GITEA__database__PATH: /data/gitea/gitea.db
-
 
       GITEA__server__HTTP_PORT: "3000"
 
@@ -250,26 +233,117 @@ services:
 
       GITEA__server__OFFLINE_MODE: "true"
 
-
       GITEA__service__DISABLE_REGISTRATION: "true"
 
-
       GITEA__security__INSTALL_LOCK: "true"
-
 
     volumes:
 
       - gitea_data:/data
 
-
     expose:
 
       - "3000"
 
+    networks:
+
+      - control_net
+
+
+  # ========================================================
+  # Jenkins
+  #
+  # S02 - Pipeline Breach
+  #
+  # IMPORTANT:
+  # - control_net only
+  # - NO host-published TCP 8080
+  # - NO Docker socket
+  # - participant access only through Nginx
+  # ========================================================
+
+  jenkins:
+
+    build:
+
+      context: ./jenkins
+
+      args:
+
+        JENKINS_BASE_IMAGE: ${JENKINS_BASE_IMAGE:-jenkins/jenkins:lts-jdk21}
+
+    image: ${JENKINS_LOCAL_IMAGE:-poisoned-pipeline/jenkins:phase7}
+
+    container_name: pp-jenkins
+
+    restart: unless-stopped
+
+    env_file:
+
+      # S01 provides the pipeline-reader credential
+      - ./private/s01/s01.env
+
+      # S02 provides the Jenkins admin account and S02 flag
+      - ./private/s02/s02.env
+
+    environment:
+
+      # Jenkins Configuration as Code
+      CASC_JENKINS_CONFIG: /var/jenkins_home/casc/jenkins.yaml
+
+      # Disable initial setup wizard.
+      # Enable separate archived-artifact permission.
+      JAVA_OPTS: >-
+        -Djenkins.install.runSetupWizard=false
+        -Dhudson.security.ArtifactsPermission=true
+
+      # Jenkins is reverse proxied under:
+      #
+      # https://10.13.10.20/jenkins/
+      JENKINS_OPTS: "--prefix=/jenkins"
+
+    volumes:
+
+      # Persistent Jenkins data
+      - jenkins_data:/var/jenkins_home
+
+      # Configuration as Code is read-only
+      - ./jenkins/casc:/var/jenkins_home/casc:ro
+
+    expose:
+
+      # Internal Docker-network exposure ONLY.
+      # This does NOT publish TCP 8080 to Ubuntu.
+      - "8080"
 
     networks:
 
       - control_net
+
+    security_opt:
+
+      - no-new-privileges:true
+
+    cap_drop:
+
+      - ALL
+
+    healthcheck:
+
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://127.0.0.1:8080/jenkins/login >/dev/null || exit 1"
+        ]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 30
+
+      start_period: 30s
+
 
   # ========================================================
   # Nginx
@@ -282,9 +356,12 @@ services:
   #     10.13.10.20
   #
   # control_net:
-  #     reverse proxy access to CTFd
+  #     reverse proxy access to:
+  #       - CTFd
+  #       - Gitea
+  #       - Jenkins
   #
-  # ONLY TCP 443 is published.
+  # ONLY TCP 443 is published to Ubuntu.
   # ========================================================
 
   nginx:
@@ -295,28 +372,30 @@ services:
 
     restart: unless-stopped
 
-
     depends_on:
 
       ctfd:
 
         condition: service_healthy
-      
+
       gitea:
 
         condition: service_started
 
+      jenkins:
+
+        condition: service_healthy
+
     ports:
 
+      # ONLY participant-facing host-published service
       - "443:443"
-
 
     volumes:
 
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
 
       - ./nginx/certs:/etc/nginx/certs:ro
-
 
     networks:
 
@@ -325,7 +404,6 @@ services:
         ipv4_address: 10.13.10.20
 
       control_net:
-
 
 
 # ==========================================================
@@ -344,6 +422,7 @@ volumes:
 
   gitea_data:
 
+  jenkins_data:
 
 
 # ==========================================================
@@ -354,6 +433,14 @@ networks:
 
   # ========================================================
   # Participant-facing network
+  #
+  # Current participant-facing gateway:
+  #
+  # Nginx = 10.13.10.20
+  #
+  # Future:
+  # Kali        = 10.13.10.10
+  # Application = 10.13.10.30
   # ========================================================
 
   player_net:
@@ -373,18 +460,21 @@ networks:
           gateway: 10.13.10.1
 
 
-
   # ========================================================
   # CTF control network
   #
-  # CTFd
-  # MariaDB
-  # Redis
-  # Nginx backend
+  # Current members:
   #
-  # Later:
-  # Gitea
-  # Jenkins
+  # - MariaDB
+  # - Redis
+  # - CTFd
+  # - Gitea
+  # - Jenkins
+  # - Nginx backend interface
+  #
+  # IMPORTANT:
+  # - internal Docker network
+  # - backend services are not host-published
   # ========================================================
 
   control_net:
@@ -396,15 +486,18 @@ networks:
     internal: true
 
 
-
   # ========================================================
   # Protected challenge network
   #
-  # Not used by Phase 5 services yet.
+  # Not used yet by Phases 5-7.
   #
   # Future:
+  #
   # Application = 10.13.20.1
   # PostgreSQL  = 10.13.20.10
+  #
+  # Gateway uses .254 because .1 is reserved for the
+  # Application Challenge.
   # ========================================================
 
   internal_net:
