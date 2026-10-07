@@ -1,0 +1,9 @@
+# Nexora release pipeline - sudo policy
+#
+# pipeline-app is permitted to run ONLY the deployment
+# verification utility during release promotion.
+#
+# No shell, no interpreter, no editor, no generic utility
+# is granted through this policy.
+
+pipeline-app ALL=(root) NOPASSWD: /usr/local/bin/deploy-verify

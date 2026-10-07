@@ -52,3 +52,6 @@ challenges/s03-ghost-dependency/work/
 
 # Phase 10 - staged S04 private material
 application/.s04-private/
+
+# Phase 11 - staged S05 private material
+application/.s05-private/
