@@ -1,0 +1,53 @@
+==========================================
+ Operation Poisoned Pipeline
+ Phase 13 Kali Reset
+==========================================
+
+[+] Recreating Kali participant container...
+[+] Waiting for Kali to be ready...
+[+] Kali is ready.
+
+[+] Running Phase 13 verification...
+======================================================
+ Operation Poisoned Pipeline
+ Phase 13 - Kali Participant Verification
+======================================================
+
+[PASS] Kali container exists
+[PASS] Kali container is running
+[PASS] Kali is on player_net
+[PASS] Kali is NOT on control_net
+[PASS] Kali is NOT on internal_net
+[PASS] Kali player_net address is 10.13.10.10
+[PASS] Tool available: git
+[PASS] Tool available: curl
+[PASS] Tool available: jq
+[PASS] Tool available: python3
+[PASS] Tool available: nmap
+[PASS] Tool available: proxychains4
+[PASS] Tool available: ssh
+[PASS] Tool available: psql
+[PASS] Tool available: nc
+[PASS] Tool available: sshpass
+[PASS] Kali can reach Application TCP 5000
+[PASS] Kali can reach Nginx HTTPS (200)
+[PASS] Kali cannot reach PostgreSQL directly
+[PASS] Kali cannot reach Gitea directly
+[PASS] Kali cannot reach Jenkins directly
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Kali has minimal host mounts
+
+======================================================
+ RESULTS
+======================================================
+Passed: 26
+Failed: 0
+
+PHASE 13 KALI: PASSED
+
+==========================================
+ PHASE 13 KALI RESET COMPLETE
+==========================================
