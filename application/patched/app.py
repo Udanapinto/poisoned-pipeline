@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+"""
+Patched comparison version of the Nexora application.
+
+The only change versus the vulnerable version is the diagnostics
+endpoint. The patched version validates the component name against a
+fixed allow-list and invokes the helper using an argv array rather
+than a shell string.
+
+This file is not built into the running container. It exists as
+design evidence showing the intended remediation.
+"""
 import os
 import socket
 import subprocess
@@ -11,10 +22,11 @@ APP_VERSION = os.environ.get(
     "nexora-platform-2026.09.03",
 )
 
-# nexora-utils version installed during the 2026.09.03 release build.
-# This version was pulled from an unexpected package source and
-# includes an undocumented diagnostics helper.
-DIAGNOSTICS_UTILS_VERSION = "2.4.1"
+APPROVED_COMPONENTS = {
+    "nexora-utils",
+    "nexora-core",
+    "nexora-platform",
+}
 
 
 @app.get("/")
@@ -42,26 +54,22 @@ def status():
 
 @app.post("/api/diagnostics/run")
 def diagnostics_run():
-    """
-    Component diagnostics helper.
-
-    Added by nexora-utils 2.4.1 during the most recent dependency
-    refresh. Intended for internal use during release verification.
-    """
     data = request.get_json(silent=True) or {}
     component = data.get("component", "nexora-utils")
     verbose = bool(data.get("verbose", False))
 
-    # The component value is passed directly into a shell command
-    # without any whitelist validation against the approved component
-    # inventory. This is the unintended code path introduced by the
-    # substituted nexora-utils build.
-    cmd = "/opt/nexora/bin/verify-component {}".format(component)
+    if component not in APPROVED_COMPONENTS:
+        return jsonify(
+            status="rejected",
+            reason="unknown-component",
+        ), 400
+
+    cmd = ["/opt/nexora/bin/verify-component", component]
 
     try:
         result = subprocess.run(
             cmd,
-            shell=True,
+            shell=False,
             capture_output=True,
             text=True,
             timeout=15,
@@ -72,7 +80,6 @@ def diagnostics_run():
     payload = {
         "status": "complete",
         "component": component,
-        "utils_version": DIAGNOSTICS_UTILS_VERSION,
         "return_code": result.returncode,
         "stdout": result.stdout,
     }

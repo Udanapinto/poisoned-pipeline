@@ -17,3 +17,9 @@ sudoers/*
 
 ssh/*
 !ssh/.gitkeep
+
+
+# Phase 10 - S04 private material (only present during build)
+!.s04-private/
+!.s04-private/**
+

@@ -49,3 +49,6 @@ nginx/certs/*
 
 # Phase 8 temporary forensic build area
 challenges/s03-ghost-dependency/work/
+
+# Phase 10 - staged S04 private material
+application/.s04-private/

@@ -72,6 +72,29 @@ RUN python -m pip install \
 # ==========================================================
 COPY app/ /opt/nexora/app/
 
+# ==========================================================
+# S04 - Poisoned Runtime materials
+# ==========================================================
+# The vulnerable diagnostics helper and the S05 handoff clue
+# are part of the intentionally vulnerable release build.
+COPY bin/ /opt/nexora/bin/
+COPY config/ /opt/nexora/config/
+
+# The S04 flag file is generated privately by
+# scripts/generate-s04-secrets.sh and staged at
+# application/.s04-private/ before build. It is copied into the
+# container as pipeline-app-readable only.
+COPY .s04-private/ /opt/nexora/private/
+
+RUN chmod 0755 /opt/nexora/bin/verify-component \
+    && chown -R root:root /opt/nexora/bin /opt/nexora/config \
+    && chmod 0755 /opt/nexora/config \
+    && chmod 0644 /opt/nexora/config/deployment.conf \
+    && chown -R pipeline-app:pipeline-app /opt/nexora/private \
+    && chmod 0700 /opt/nexora/private \
+    && find /opt/nexora/private -type f -exec chmod 0600 {} \;
+
+
 COPY scripts/entrypoint.sh \
     /usr/local/bin/pp-entrypoint
 
@@ -80,11 +103,17 @@ COPY scripts/entrypoint.sh \
 RUN chmod 0755 /usr/local/bin/pp-entrypoint \
     && chown -R root:root /opt/nexora \
     && find /opt/nexora \
-        -type d \
-        -exec chmod 0755 {} \; \
+         -type d \
+         -not -path '/opt/nexora/private*' \
+         -exec chmod 0755 {} \; \
     && find /opt/nexora \
-        -type f \
-        -exec chmod 0644 {} \;
+         -type f \
+         -not -path '/opt/nexora/private/*' \
+         -not -path '/opt/nexora/bin/*' \
+         -exec chmod 0644 {} \; \
+    && chown -R pipeline-app:pipeline-app /opt/nexora/private \
+    && chmod 0700 /opt/nexora/private \
+    && find /opt/nexora/private -type f -exec chmod 0600 {} \;
 
 EXPOSE 5000
 
