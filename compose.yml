@@ -350,6 +350,167 @@ services:
 
 
   # ========================================================
+  # Application Challenge
+  #
+  # Foundation for:
+  # S04 - Poisoned Runtime
+  # S05 - Broken Trust
+  # S06 - Behind the Firewall
+  #
+  # Phase 12 state:
+  # - Flask service running as pipeline-app (UID 10001)
+  # - S04 vulnerable diagnostics endpoint enabled
+  # - S05 deploy-verify + sudoers + writable hook
+  # - S06 sshd pivot endpoint (tunnel-only pivot user)
+  #
+  # Networking:
+  # - player_net:   10.13.10.30  (participant-facing)
+  # - internal_net: 10.13.20.1   (controlled pivot)
+  #
+  # gw_priority: 1 on internal_net makes the default route
+  # point to the isolated network, not player_net.
+  # ========================================================
+
+  application:
+
+    build:
+
+      context: ./application
+
+      args:
+
+        PYTHON_BASE_IMAGE: ${APPLICATION_BASE_IMAGE}
+
+    image: ${APPLICATION_IMAGE}
+
+    container_name: pp-application
+
+    hostname: nexora-app
+
+    restart: unless-stopped
+
+    environment:
+
+      NEXORA_APP_VERSION: ${NEXORA_APP_VERSION}
+
+    expose:
+
+      - "5000"
+
+    networks:
+
+      player_net:
+
+        ipv4_address: 10.13.10.30
+
+        aliases:
+
+          - nexora-app
+
+        gw_priority: 0
+
+      internal_net:
+
+        ipv4_address: 10.13.20.1
+
+        aliases:
+
+          - nexora-app-internal
+
+        gw_priority: 1
+
+    healthcheck:
+
+      test:
+
+        [
+
+          "CMD-SHELL",
+
+          "curl -fsS http://127.0.0.1:5000/healthz >/dev/null || exit 1"
+
+        ]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 12
+
+      start_period: 10s
+
+
+  # ============================================================
+  # PostgreSQL 16
+  # S06 - Behind the Firewall
+  #
+  # IMPORTANT:
+  #   - internal_net ONLY
+  #   - NO host-published TCP 5432
+  #   - NO player_net membership
+  #   - NO control_net membership
+  # ============================================================
+
+  postgres:
+
+    image: ${POSTGRES_IMAGE}
+
+    container_name: pp-postgres
+
+    hostname: postgres
+
+    restart: unless-stopped
+
+    environment:
+
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      POSTGRES_USER: postgres
+
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    volumes:
+
+      - postgres_data:/var/lib/postgresql/data
+
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+
+    networks:
+
+      internal_net:
+
+        ipv4_address: 10.13.20.10
+
+        aliases:
+
+          - postgres
+
+          - nexora-db
+
+    expose:
+
+      - "5432"
+
+    healthcheck:
+
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB}"]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 12
+
+      start_period: 15s
+
+    security_opt:
+
+      - no-new-privileges:true
+
+
+  # ========================================================
   # Nginx
   #
   # Participant-facing gateway.
@@ -367,62 +528,6 @@ services:
   #
   # ONLY TCP 443 is published to Ubuntu.
   # ========================================================
-
-  # ========================================================
-  # Application Challenge
-  #
-  # Foundation for:
-  # S04 - Poisoned Runtime
-  # S05 - Broken Trust
-  # S06 - Behind the Firewall
-  #
-  # Phase 9:
-  # - clean Flask service only
-  # - no S04 vulnerability yet
-  # - no S05 sudo path yet
-  # - no S06 SSH login yet
-  # ========================================================
-  application:
-    build:
-      context: ./application
-      args:
-        PYTHON_BASE_IMAGE: ${APPLICATION_BASE_IMAGE}
-
-    image: ${APPLICATION_IMAGE}
-    container_name: pp-application
-    hostname: nexora-app
-
-    restart: unless-stopped
-
-    environment:
-      NEXORA_APP_VERSION: ${NEXORA_APP_VERSION}
-
-    expose:
-      - "5000"
-
-    networks:
-      player_net:
-        ipv4_address: 10.13.10.30
-        aliases:
-          - nexora-app
-        gw_priority: 0
-
-      internal_net:
-        ipv4_address: 10.13.20.1
-        aliases:
-          - nexora-app-internal
-        gw_priority: 1
-
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -fsS http://127.0.0.1:5000/healthz >/dev/null || exit 1"
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 10s
 
   nginx:
 
@@ -483,6 +588,8 @@ volumes:
   gitea_data:
 
   jenkins_data:
+
+  postgres_data:
 
 
 # ==========================================================
@@ -549,12 +656,10 @@ networks:
   # ========================================================
   # Protected challenge network
   #
-  # Not used yet by Phases 5-7.
+  # Current members:
   #
-  # Future:
-  #
-  # Application = 10.13.20.1
-  # PostgreSQL  = 10.13.20.10
+  # - Application Challenge = 10.13.20.1
+  # - PostgreSQL 16         = 10.13.20.10
   #
   # Gateway uses .254 because .1 is reserved for the
   # Application Challenge.

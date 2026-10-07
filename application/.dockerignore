@@ -32,3 +32,7 @@ venv/
 # ============================================================
 !.s05-private/
 !.s05-private/**
+
+# Phase 12 - S06 private material (only present during build)
+!.s06-private/
+!.s06-private/**

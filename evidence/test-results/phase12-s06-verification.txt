@@ -1,0 +1,37 @@
+==============================================================
+ Operation Poisoned Pipeline
+ Phase 12 - S06 Behind the Firewall Verification
+==============================================================
+
+[PASS] private/s06/s06.env exists
+[PASS] PostgreSQL container exists
+[PASS] PostgreSQL container is running
+[PASS] PostgreSQL healthcheck is healthy
+[PASS] PostgreSQL is on internal_net
+[PASS] PostgreSQL is NOT on player_net
+[PASS] PostgreSQL is NOT on control_net
+[PASS] PostgreSQL internal_net address is 10.13.20.10
+[PASS] PostgreSQL has no host-published ports
+[PASS] sshd is listening on TCP 22 inside the application container
+[PASS] pivot account exists
+[PASS] /root/s06_pivot.txt is root:root 0600
+[PASS] pipeline-app cannot read /root/s06_pivot.txt before escalation
+[PASS] ctf_final row exists in nexora_prod
+[PASS] ctf_reader can read the S06 flag via SELECT
+[PASS] ctf_reader cannot INSERT
+[PASS] ctf_reader cannot UPDATE
+[PASS] ctf_reader cannot DELETE
+[PASS] player_net cannot reach PostgreSQL directly
+[PASS] Application player_net address is 10.13.10.30
+[PASS] Application internal_net address is 10.13.20.1
+
+[*] Running end-to-end tunnel test from a player_net peer...
+[PASS] End-to-end pivot from player_net recovers the S06 flag
+
+==============================================================
+ RESULTS
+==============================================================
+Passed: 22
+Failed: 0
+
+PHASE 12 S06: PASSED

@@ -1,0 +1,7 @@
+]633;E;echo "PostgreSQL image:";977309dd-b954-4d2e-8bcb-26026705639b]633;CPostgreSQL image:
+ID=sha256:e62fbf9d3e2b49816a32c400ed2dba83e3b361e6833e624024309c35d334b412
+postgres@sha256:e62fbf9d3e2b49816a32c400ed2dba83e3b361e6833e624024309c35d334b412
+
+
+Application image:
+ID=sha256:92362cb37f00dc4a1482a8e88a509cd590b5bec30d41ae8e61e9a78d906b7f9a

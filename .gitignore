@@ -55,3 +55,6 @@ application/.s04-private/
 
 # Phase 11 - staged S05 private material
 application/.s05-private/
+
+# Phase 12 - staged S06 private material
+application/.s06-private/

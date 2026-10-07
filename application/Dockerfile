@@ -73,14 +73,8 @@ COPY app/ /opt/nexora/app/
 # ==========================================================
 # S04 - Poisoned Runtime materials
 # ==========================================================
-# The vulnerable diagnostics helper and the S05 handoff clue
-# are part of the intentionally vulnerable release build.
 COPY bin/ /opt/nexora/bin/
 COPY config/ /opt/nexora/config/
-
-# The S04 flag file is generated privately by
-# scripts/generate-s04-secrets.sh and staged at
-# application/.s04-private/ before build.
 COPY .s04-private/ /opt/nexora/private/
 
 RUN chmod 0755 /opt/nexora/bin/verify-component \
@@ -95,21 +89,8 @@ RUN chmod 0755 /opt/nexora/bin/verify-component \
 # ==========================================================
 # S05 - Broken Trust materials
 # ==========================================================
-#
-# The privileged deploy-verify utility, its sudoers policy,
-# and the group-writable validation hook.
-#
-# The hook file must be group-writable AND executable:
-#   owner root            : rwx   (0755 semantics for owner)
-#   group pipeline-app    : rwx   (w -> exploit, x -> deploy-verify accepts it)
-#   others                : r-x
-# Mode 0775.
-#
 COPY sudoers/pp-pipeline-app /etc/sudoers.d/pp-pipeline-app
 COPY hooks/ /opt/nexora/hooks/
-
-# S05 private material (staged by scripts/build-application.sh).
-# Contains the S05 flag and the S06 pivot credential.
 COPY .s05-private/ /root/.s05-stage/
 
 RUN chmod 0440 /etc/sudoers.d/pp-pipeline-app \
@@ -127,23 +108,59 @@ RUN chmod 0440 /etc/sudoers.d/pp-pipeline-app \
     && chown root:root /root/s05_flag.txt /root/s06_pivot.txt \
     && rm -rf /root/.s05-stage
 
+# ==========================================================
+# S06 - Behind the Firewall materials
+# ==========================================================
+#
+# sshd drop-in: password auth disabled globally, re-enabled
+# only for the pivot account. AllowTcpForwarding is required
+# for the S06 SOCKS tunnel. ForceCommand /usr/sbin/nologin
+# on the pivot user means it can only be used as a tunnel
+# endpoint, not as an interactive shell.
+#
+COPY ssh/pp-pipeline.conf /etc/ssh/sshd_config.d/pp-pipeline.conf
+
+RUN chmod 0644 /etc/ssh/sshd_config.d/pp-pipeline.conf \
+    && chown root:root /etc/ssh/sshd_config.d/pp-pipeline.conf \
+    && rm -f /etc/ssh/ssh_host_*_key /etc/ssh/ssh_host_*_key.pub \
+    && mkdir -p /run/sshd \
+    && chmod 0755 /run/sshd
+
+# Pivot account creation.
+#
+# Idempotent: if the user already exists for any reason, it is
+# not recreated. The password hash is staged privately by
+# scripts/build-application.sh at
+# application/.s06-private/pivot_pass.txt.
+#
+COPY .s06-private/pivot_pass.txt /root/.s06-stage/pivot_pass.txt
+
+RUN PIVOT_HASH="$(cat /root/.s06-stage/pivot_pass.txt)" \
+    && (id pivot >/dev/null 2>&1 || useradd \
+            --create-home \
+            --shell /usr/sbin/nologin \
+            --comment "S06 pivot account" \
+            pivot) \
+    && echo "pivot:${PIVOT_HASH}" | chpasswd -e \
+    && rm -rf /root/.s06-stage \
+    && chmod 0700 /home/pivot
+
+# ==========================================================
+# Entrypoint
+# ==========================================================
 COPY scripts/entrypoint.sh \
     /usr/local/bin/pp-entrypoint
 
 # ==========================================================
 # Recursive permission hardening
 # ==========================================================
-# Applies to application source and helper binaries.
-# Explicitly excludes:
+# Excludes:
 #   /opt/nexora/private  (S04 flag; owned by pipeline-app)
-#   /opt/nexora/hooks    (S05 hook; group-writable by pipeline-app)
+#   /opt/nexora/hooks    (S05 hook; group-writable)
 #
-# The hooks directory is re-asserted with the correct
-# group ownership and mode AFTER the recursive chown so the
-# S05 trust-boundary remains intact.
-#
-# IMPORTANT: the final two lines must be 0775, not 0664.
-# 0664 has no execute bit and deploy-verify will refuse it.
+# The hooks block is re-asserted last so the S05 trust
+# boundary stays intact. It must be 0775 so deploy-verify
+# accepts it as executable.
 #
 RUN chmod 0755 /usr/local/bin/pp-entrypoint \
     && chown -R root:root /opt/nexora \
