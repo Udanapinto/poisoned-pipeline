@@ -1,0 +1,2 @@
+]633;E;docker compose exec -T application python --version;40865393-2a02-4bb1-8b02-d5024c6df699]633;CPython 3.9.25
+Flask 3.1.2

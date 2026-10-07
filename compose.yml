@@ -368,6 +368,62 @@ services:
   # ONLY TCP 443 is published to Ubuntu.
   # ========================================================
 
+  # ========================================================
+  # Application Challenge
+  #
+  # Foundation for:
+  # S04 - Poisoned Runtime
+  # S05 - Broken Trust
+  # S06 - Behind the Firewall
+  #
+  # Phase 9:
+  # - clean Flask service only
+  # - no S04 vulnerability yet
+  # - no S05 sudo path yet
+  # - no S06 SSH login yet
+  # ========================================================
+  application:
+    build:
+      context: ./application
+      args:
+        PYTHON_BASE_IMAGE: ${APPLICATION_BASE_IMAGE}
+
+    image: ${APPLICATION_IMAGE}
+    container_name: pp-application
+    hostname: nexora-app
+
+    restart: unless-stopped
+
+    environment:
+      NEXORA_APP_VERSION: ${NEXORA_APP_VERSION}
+
+    expose:
+      - "5000"
+
+    networks:
+      player_net:
+        ipv4_address: 10.13.10.30
+        aliases:
+          - nexora-app
+        gw_priority: 0
+
+      internal_net:
+        ipv4_address: 10.13.20.1
+        aliases:
+          - nexora-app-internal
+        gw_priority: 1
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://127.0.0.1:5000/healthz >/dev/null || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
   nginx:
 
     image: nginx:1.28.0-alpine
