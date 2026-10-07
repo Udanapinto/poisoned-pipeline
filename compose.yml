@@ -310,6 +310,10 @@ services:
       # Configuration as Code is read-only
       - ./jenkins/casc:/var/jenkins_home/casc:ro
 
+      # Phase 8 — public-safe static forensic evidence
+      - ./challenges/s03-ghost-dependency/dist:/opt/poisoned-pipeline/s03/dist:ro
+      - ./challenges/s03-ghost-dependency/keys:/opt/poisoned-pipeline/s03/keys:ro
+
     expose:
 
       # Internal Docker-network exposure ONLY.

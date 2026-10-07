@@ -58,92 +58,57 @@ security_review=INVESTIGATION_REQUIRED
 S02_TOKEN=${S02_FLAG}
 
 NEXT_STAGE_EVIDENCE=evidence-s03.zip
+NEXT_STAGE_SIGNATURE=evidence-s03.zip.sig
+NEXT_STAGE_PUBLIC_KEY=s03-signing-public.pem
 EOF
 
-        TMP="$(mktemp -d)"
-        trap 'rm -rf "$TMP"' EXIT
-
         # ------------------------------------------------------
-        # Temporary Phase 7 handoff structure.
+        # Phase 8 — Final S03 forensic evidence
         #
-        # Phase 8 will replace the CONTENTS with the final
-        # Ghost Dependency evidence while keeping the same
-        # evidence-s03.zip handoff.
+        # These files are generated outside Jenkins by:
+        #
+        #   ./scripts/generate-s03-evidence.sh
+        #
+        # and mounted read-only into the Jenkins container.
         # ------------------------------------------------------
 
-        cat > "$TMP/sbom.json" <<'EOF'
-{
-  "bomFormat": "CycloneDX",
-  "specVersion": "1.7",
-  "serialNumber": "urn:uuid:11111111-2222-3333-4444-555555555555",
-  "version": 1,
-  "metadata": {
-    "component": {
-      "type": "application",
-      "name": "nexora-platform",
-      "version": "2026.09.03"
-    }
-  },
-  "components": [
-    {
-      "type": "library",
-      "name": "nexora-utils",
-      "version": "2.4.1",
-      "purl": "pkg:pypi/nexora-utils@2.4.1"
-    }
-  ]
-}
-EOF
+        S03_DIST="/opt/poisoned-pipeline/s03/dist"
+        S03_KEYS="/opt/poisoned-pipeline/s03/keys"
 
-        cat > "$TMP/build.log" <<'EOF'
-Nexora release build 103
-Supply-chain evidence captured.
-Full S03 evidence will be finalized during Phase 8.
-EOF
+        # ------------------------------------------------------
+        # Validate Phase 8 evidence inputs
+        # ------------------------------------------------------
 
-        cat > "$TMP/approved-components.json" <<'EOF'
-{
-  "approved": [
-    {
-      "name": "nexora-utils",
-      "version": "2.4.1"
-    }
-  ]
-}
-EOF
+        for FILE in \
+            "$S03_DIST/evidence-s03.zip" \
+            "$S03_DIST/evidence-s03.zip.sig" \
+            "$S03_KEYS/s03-signing-public.pem"
+        do
+            if [[ ! -r "$FILE" ]]; then
+                echo "[ERROR] Missing Phase 8 evidence input."
+                echo "[ERROR] Required file is not readable:"
+                echo "        $FILE"
+                exit 1
+            fi
+        done
 
-        cat > "$TMP/package-sources.txt" <<'EOF'
-nexora-utils|2.4.1|internal-approved-index
-EOF
+        # ------------------------------------------------------
+        # Archive final S03 evidence
+        # ------------------------------------------------------
 
-        (
-            cd "$TMP"
+        cp \
+            "$S03_DIST/evidence-s03.zip" \
+            "$OUT/evidence-s03.zip"
 
-            sha256sum \
-                sbom.json \
-                build.log \
-                approved-components.json \
-                package-sources.txt \
-                > SHA256SUMS
+        cp \
+            "$S03_DIST/evidence-s03.zip.sig" \
+            "$OUT/evidence-s03.zip.sig"
 
-            # Fixed timestamps improve reproducibility.
-            touch -t 202601010000 \
-                sbom.json \
-                build.log \
-                approved-components.json \
-                package-sources.txt \
-                SHA256SUMS
+        cp \
+            "$S03_KEYS/s03-signing-public.pem" \
+            "$OUT/s03-signing-public.pem"
 
-            zip -X -q \
-                "$OUT/evidence-s03.zip" \
-                sbom.json \
-                build.log \
-                approved-components.json \
-                package-sources.txt \
-                SHA256SUMS
-        )
-
-        echo "[+] Investigation artifacts archived."
+        echo "[+] Final S03 forensic evidence archived."
         ;;
 
     104)

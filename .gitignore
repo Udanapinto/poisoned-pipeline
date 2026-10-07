@@ -46,3 +46,6 @@ nginx/certs/*
 # VS Code
 .vscode/
 
+
+# Phase 8 temporary forensic build area
+challenges/s03-ghost-dependency/work/

@@ -1,0 +1,10 @@
+Archive:  challenges/s03-ghost-dependency/dist/evidence-s03.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      329  2026-01-01 00:00   SHA256SUMS
+     1522  2026-01-01 00:00   approved-components.json
+      710  2026-01-01 00:00   build.log
+      444  2026-01-01 00:00   package-sources.txt
+     2906  2026-01-01 00:00   sbom.json
+---------                     -------
+     5911                     5 files

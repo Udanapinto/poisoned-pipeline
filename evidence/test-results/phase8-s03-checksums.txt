@@ -1,0 +1,4 @@
+f9fde09598480d85cbec34f12aeaee918f62547b4c272195c321fad4161bdb35  challenges/s03-ghost-dependency/dist/evidence-s03.zip
+39d32529e69fc9a70a901d5f08375c99d10939d72684a775c312ee5312c8591f  challenges/s03-ghost-dependency/dist/evidence-s03.zip.sig
+9e1476fba1a257e54a86d48cf59872df1f0374e7755cf282c169747989b3374b  challenges/s03-ghost-dependency/keys/s03-signing-public.pem
+9627efbcb140750f115945e32c3a84edd8e0539a46fbcbdd6b78750959e6bf33  challenges/s03-ghost-dependency/generate-evidence.py
