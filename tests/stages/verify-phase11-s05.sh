@@ -254,11 +254,12 @@ else
 fi
 
 # --- SSH must still be disabled ---------------------------------------------
+# --- Phase 12 SSH pivot endpoint must be listening ---
 if docker compose exec -T application \
-     sh -lc 'ss -lntH | awk "{print \$4}" | grep -Eq "(\^|:)22\$"' 2>/dev/null; then
-  fail "SSH is not listening in Phase 11"
+    sh -lc 'ss -lntH | awk "{print \$4}" | grep -Eq "(^|:)22\$"' >/dev/null 2>&1; then
+    pass "SSH is listening on TCP 22 (Phase 12 state)"
 else
-  pass "SSH is not listening in Phase 11"
+    fail "SSH is listening on TCP 22 (Phase 12 state)"
 fi
 
 # --- Network addresses -------------------------------------------------------

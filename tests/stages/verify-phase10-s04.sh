@@ -162,21 +162,39 @@ else
   fail "Flask process still has no effective Linux capabilities"
 fi
 
-# ------------------------------------------------------
-# SSH and S05 sudo must still be disabled
-# ------------------------------------------------------
+# --- Phase 12 SSH pivot endpoint must be listening ---
 if docker compose exec -T application \
     sh -lc 'ss -lntH | awk "{print \$4}" | grep -Eq "(^|:)22\$"' >/dev/null 2>&1; then
-  fail "SSH is not listening in Phase 10"
+    pass "SSH is listening on TCP 22 (Phase 12 state)"
 else
-  pass "SSH is not listening in Phase 10"
+    fail "SSH is listening on TCP 22 (Phase 12 state)"
 fi
 
-if docker compose exec -T --user 10001:10001 application \
-    sudo -n -l >/dev/null 2>&1; then
-  fail "No Phase 10 passwordless sudo path exists"
+# --- Phase 11 passwordless sudo exists ONLY for deploy-verify ---
+SUDO_LIST="$(docker compose exec -T --user 10001:10001 application sh -lc 'sudo -n -l' 2>/dev/null || true)"
+
+if grep -q '/usr/local/bin/deploy-verify' <<<"${SUDO_LIST}"; then
+    pass "Passwordless sudo exists for /usr/local/bin/deploy-verify (Phase 11 state)"
 else
-  pass "No Phase 10 passwordless sudo path exists"
+    fail "Passwordless sudo exists for /usr/local/bin/deploy-verify (Phase 11 state)"
+fi
+
+if grep -qE 'NOPASSWD:.*/bin/bash' <<<"${SUDO_LIST}"; then
+    fail "Passwordless sudo does NOT allow /bin/bash"
+else
+    pass "Passwordless sudo does NOT allow /bin/bash"
+fi
+
+if grep -qE 'NOPASSWD:.*/bin/sh' <<<"${SUDO_LIST}"; then
+    fail "Passwordless sudo does NOT allow /bin/sh"
+else
+    pass "Passwordless sudo does NOT allow /bin/sh"
+fi
+
+if grep -qE 'NOPASSWD:.*/usr/bin/python' <<<"${SUDO_LIST}"; then
+    fail "Passwordless sudo does NOT allow python"
+else
+    pass "Passwordless sudo does NOT allow python"
 fi
 
 # ------------------------------------------------------

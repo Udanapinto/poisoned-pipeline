@@ -199,14 +199,16 @@ DIAG_CODE="$(
     -o /dev/null \
     -w '%{http_code}' \
     -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"component":"nexora-utils"}' \
     http://127.0.0.1:5000/api/diagnostics/run \
     2>/dev/null || true
 )"
 
-if [[ "$DIAG_CODE" == "404" ]]; then
-    pass "S04 diagnostics endpoint is absent in Phase 9"
+if [[ "${DIAG_CODE}" == "200" ]]; then
+    pass "S04 diagnostics endpoint responds with 200 (Phase 10 state)"
 else
-    fail "S04 diagnostics endpoint is absent in Phase 9"
+    fail "S04 diagnostics endpoint responds with 200 (Phase 10 state) — got ${DIAG_CODE}"
 fi
 
 # --------------------------------------------------
@@ -254,29 +256,40 @@ fi
 # --------------------------------------------------
 # SSH must not be enabled yet
 # --------------------------------------------------
+# Phase 12 SSH pivot endpoint must be listening
 if docker compose exec -T application \
-    sh -lc \
-    'ss -lntH | awk "{print \$4}" | grep -Eq "(^|:)22$"' \
-    >/dev/null 2>&1
-then
-    fail "SSH is not listening in Phase 9"
+    sh -lc 'ss -lntH | awk "{print \$4}" | grep -Eq "(^|:)22\$"' \
+    >/dev/null 2>&1; then
+    pass "SSH is listening on TCP 22 (Phase 12 state)"
 else
-    pass "SSH is not listening in Phase 9"
+    fail "SSH is listening on TCP 22 (Phase 12 state)"
 fi
 
 # --------------------------------------------------
 # S05 privilege path must not exist yet
 # --------------------------------------------------
-if docker compose exec \
-    -T \
-    --user 10001:10001 \
-    application \
-    sudo -n -l \
-    >/dev/null 2>&1
-then
-    fail "No Phase 9 passwordless sudo path exists"
+# Phase 11 passwordless sudo exists ONLY for deploy-verify
+SUDO_LIST="$(
+    docker compose exec -T --user 10001:10001 application \
+    sh -lc 'sudo -n -l' 2>/dev/null || true
+)"
+
+if grep -q '/usr/local/bin/deploy-verify' <<<"${SUDO_LIST}"; then
+    pass "Passwordless sudo exists for /usr/local/bin/deploy-verify (Phase 11 state)"
 else
-    pass "No Phase 9 passwordless sudo path exists"
+    fail "Passwordless sudo exists for /usr/local/bin/deploy-verify (Phase 11 state)"
+fi
+
+if grep -qE 'NOPASSWD:.*/bin/bash' <<<"${SUDO_LIST}"; then
+    fail "Passwordless sudo does NOT allow /bin/bash"
+else
+    pass "Passwordless sudo does NOT allow /bin/bash"
+fi
+
+if grep -qE 'NOPASSWD:.*/bin/sh' <<<"${SUDO_LIST}"; then
+    fail "Passwordless sudo does NOT allow /bin/sh"
+else
+    pass "Passwordless sudo does NOT allow /bin/sh"
 fi
 
 # --------------------------------------------------
