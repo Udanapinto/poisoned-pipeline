@@ -58,3 +58,5 @@ application/.s05-private/
 
 # Phase 12 - staged S06 private material
 application/.s06-private/
+golden-seed.tar.gz
+golden-seed.tar.gz.bak
