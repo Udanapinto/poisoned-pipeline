@@ -65,13 +65,6 @@ if [[ ! -f "${SEED_FILE}" ]]; then
 fi
 pass "Golden seed found: ${SEED_FILE} ($(du -h "${SEED_FILE}" | cut -f1))"
 
-# Verify it's a valid gzip archive
-if ! tar tzf "${SEED_FILE}" >/dev/null 2>&1; then
-    err "Golden seed is not a valid tar.gz archive — refusing to wipe data."
-    exit 1
-fi
-pass "Golden seed is a valid tar.gz"
-
 if ! command -v docker >/dev/null 2>&1; then
     err "docker is not installed or not in PATH"
     exit 1
@@ -84,14 +77,34 @@ if [[ ! -f "${ROOT_DIR}/compose.yml" ]]; then
 fi
 pass "compose.yml found"
 
-# Sanity: check the seed contains at least one volume snapshot.
-# tar implementations differ on whether they prefix entries with "./",
-# so we match on "volumes/" or on a specific volume filename.
-if ! tar tzf "${SEED_FILE}" | grep -qE '(^|/)volumes/|mariadb_data\.tar\.gz'; then
+# ---------------------------------------------------------------
+# Volume snapshot check.
+# Write the tar listing to a temp file, then grep it. This avoids
+# any bash string-matching edge cases with very large listings and
+# works regardless of whether tar prefixes entries with "./" or not.
+# ---------------------------------------------------------------
+TAR_LIST="$(mktemp)"
+trap 'rm -f "${TAR_LIST}"; [[ -n "${TMP_DIR:-}" ]] && rm -rf "${TMP_DIR}"' EXIT
+
+if ! tar tzf "${SEED_FILE}" > "${TAR_LIST}" 2>/dev/null; then
+    err "Golden seed is not a valid tar.gz archive — refusing to wipe data."
+    exit 1
+fi
+pass "Golden seed is a valid tar.gz"
+
+if ! grep -q 'volumes/' "${TAR_LIST}"; then
     err "Golden seed does not contain any volume snapshots — refusing to wipe data."
+    echo "First 20 entries found in archive:"
+    head -20 "${TAR_LIST}" | sed 's/^/    /'
     exit 1
 fi
 pass "Golden seed contains volume snapshots"
+
+if ! grep -q 'mariadb_data.tar.gz' "${TAR_LIST}"; then
+    err "Golden seed is missing the critical mariadb_data volume — refusing to wipe data."
+    exit 1
+fi
+pass "Golden seed contains the MariaDB (CTFd database) snapshot"
 
 # Optional prompt
 if [[ "${FORCE:-0}" != "1" && -t 0 ]]; then
@@ -110,8 +123,6 @@ fi
 step "Extracting golden seed"
 
 TMP_DIR="$(mktemp -d)"
-trap 'rm -rf "${TMP_DIR}"' EXIT
-
 tar xzf "${SEED_FILE}" -C "${TMP_DIR}"
 pass "Extracted to ${TMP_DIR}"
 
@@ -236,15 +247,14 @@ done
 # ─────────────────────────────────────────────────────────────
 step "Verifying reachability"
 
-# Give Nginx a moment to resolve the new backend containers
 sleep 5
 
 CODE_CTFD="$(curl -k -s -o /dev/null -w '%{http_code}' https://10.13.10.20/ 2>/dev/null || echo 000)"
 CODE_GITEA="$(curl -k -s -o /dev/null -w '%{http_code}' https://10.13.10.20/git/ 2>/dev/null || echo 000)"
 CODE_JENKINS="$(curl -k -s -o /dev/null -w '%{http_code}' https://10.13.10.20/jenkins/login 2>/dev/null || echo 000)"
 
-[[ "${CODE_CTFD}" =~ ^(200|302)$ ]] && pass "CTFd reachable (${CODE_CTFD})" || warn "CTFd reachable? HTTP ${CODE_CTFD}"
-[[ "${CODE_GITEA}" =~ ^(200|302)$ ]] && pass "Gitea reachable (${CODE_GITEA})" || warn "Gitea reachable? HTTP ${CODE_GITEA}"
+[[ "${CODE_CTFD}"    =~ ^(200|302)$ ]] && pass "CTFd reachable (${CODE_CTFD})"       || warn "CTFd reachable? HTTP ${CODE_CTFD}"
+[[ "${CODE_GITEA}"   =~ ^(200|302)$ ]] && pass "Gitea reachable (${CODE_GITEA})"     || warn "Gitea reachable? HTTP ${CODE_GITEA}"
 [[ "${CODE_JENKINS}" =~ ^(200|302)$ ]] && pass "Jenkins reachable (${CODE_JENKINS})" || warn "Jenkins reachable? HTTP ${CODE_JENKINS}"
 
 echo
