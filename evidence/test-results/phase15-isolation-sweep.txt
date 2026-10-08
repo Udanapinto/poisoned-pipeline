@@ -1,0 +1,76 @@
+======================================================
+ Operation Poisoned Pipeline
+ Isolation Sweep
+======================================================
+
+[PASS] Network exists: poisoned-pipeline_player_net
+[PASS] Network exists: poisoned-pipeline_control_net
+[PASS] Network exists: poisoned-pipeline_internal_net
+[PASS] Network poisoned-pipeline_control_net is internal
+[PASS] Network poisoned-pipeline_internal_net is internal
+[PASS] player_net subnet is 10.13.10.0/24
+[PASS] internal_net subnet is 10.13.20.0/24
+[PASS] pp-kali is on player_net
+[PASS] pp-postgres is on internal_net
+[PASS] pp-nginx is on player_net
+[PASS] pp-nginx is on control_net
+[PASS] pp-jenkins is on control_net
+[PASS] pp-redis is on control_net
+[PASS] pp-ctfd is on control_net
+[PASS] pp-gitea is on control_net
+[PASS] pp-application is on player_net
+[PASS] pp-application is on internal_net
+[PASS] pp-mariadb is on control_net
+[PASS] pp-kali is NOT on internal_net
+[PASS] pp-ctfd is NOT on internal_net
+[PASS] pp-mariadb is NOT on internal_net
+[PASS] pp-redis is NOT on internal_net
+[PASS] pp-gitea is NOT on internal_net
+[PASS] pp-jenkins is NOT on internal_net
+[PASS] pp-mariadb has no host-published ports
+[PASS] pp-redis has no host-published ports
+[PASS] pp-ctfd has no host-published ports
+[PASS] pp-gitea has no host-published ports
+[PASS] pp-jenkins has no host-published ports
+[PASS] pp-postgres has no host-published ports
+[PASS] pp-application has no host-published ports
+[PASS] pp-kali has no host-published ports
+[PASS] Nginx publishes TCP 443
+[PASS] pp-kali is not privileged
+[PASS] pp-application is not privileged
+[PASS] pp-postgres is not privileged
+[PASS] pp-ctfd is not privileged
+[PASS] pp-gitea is not privileged
+[PASS] pp-jenkins is not privileged
+[PASS] pp-mariadb is not privileged
+[PASS] pp-redis is not privileged
+[PASS] pp-kali does not use host PID namespace
+[PASS] pp-kali does not use host network mode
+[PASS] pp-application does not use host PID namespace
+[PASS] pp-application does not use host network mode
+[PASS] pp-postgres does not use host PID namespace
+[PASS] pp-postgres does not use host network mode
+[PASS] pp-kali has no Docker socket
+[PASS] pp-application has no Docker socket
+[PASS] pp-postgres has no Docker socket
+[PASS] pp-ctfd has no Docker socket
+[PASS] pp-gitea has no Docker socket
+[PASS] pp-jenkins has no Docker socket
+[PASS] Kali -> Application TCP 5000 works
+[PASS] Application -> PostgreSQL internal_net TCP 5432 works
+[PASS] Kali -> PostgreSQL directly fails
+[PASS] Kali -> Gitea directly fails
+[PASS] Kali -> Jenkins directly fails
+[PASS] pp-ctfd cannot reach the Internet
+[PASS] pp-gitea cannot reach the Internet
+[PASS] pp-jenkins cannot reach the Internet
+[PASS] pp-application cannot reach the Internet
+[PASS] pp-postgres cannot reach the Internet
+
+======================================================
+ RESULTS
+======================================================
+Passed: 63
+Failed: 0
+
+ISOLATION SWEEP: PASSED

@@ -1,0 +1,68 @@
+[
+    {
+        "Name": "poisoned-pipeline_player_net",
+        "Id": "44711a95070e1d12557f6a728c33d38b181aad3b5d37ba783dbfcbb8fb867f20",
+        "Created": "2026-10-07T02:18:23.527783315+05:30",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "10.13.10.0/24",
+                    "Gateway": "10.13.10.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.config-hash": "959e64966d17677d6546a869d7bb01ce51fba4763265d3a8f0158794fddc320f",
+            "com.docker.compose.network": "player_net",
+            "com.docker.compose.project": "poisoned-pipeline",
+            "com.docker.compose.version": "5.6.0"
+        },
+        "Containers": {
+            "5aa71e4f340f89c8f7ff0f266885d08824a88cdf967ac12920b924506889918d": {
+                "Name": "pp-application",
+                "EndpointID": "1dd98f5a38446b8428a09c18283732f86afc9f80d394ca3393a34aef8afd4cbc",
+                "MacAddress": "6a:a8:a1:db:34:1f",
+                "IPv4Address": "10.13.10.30/24",
+                "IPv6Address": ""
+            },
+            "a1c978f57888dd30b0e72bd16d120bc3bea2fbe99fa50c75a2d0903898fce8d6": {
+                "Name": "pp-kali",
+                "EndpointID": "2998b4b14ab1a159845408a065070dcb1bf77a508fb2a31088e9a56bd3677e4d",
+                "MacAddress": "3a:8b:ff:87:5c:31",
+                "IPv4Address": "10.13.10.10/24",
+                "IPv6Address": ""
+            },
+            "de06fa1e503613c5d6fc1fad309e84d804a34bd6c31ae5b49fffcd295c768e88": {
+                "Name": "pp-nginx",
+                "EndpointID": "cd2f087afac9c9b42000b5dbea61a8cba54e0441e225cdb721f5055a38a25fae",
+                "MacAddress": "42:65:38:97:99:53",
+                "IPv4Address": "10.13.10.20/24",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "10.13.10.0/24": {
+                        "IPsInUse": 6,
+                        "DynamicIPsAvailable": 250
+                    }
+                }
+            }
+        }
+    }
+]

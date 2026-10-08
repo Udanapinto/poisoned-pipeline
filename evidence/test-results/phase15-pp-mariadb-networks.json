@@ -1,0 +1,26 @@
+{
+  "poisoned-pipeline_control_net": {
+    "IPAMConfig": null,
+    "Links": null,
+    "Aliases": [
+      "pp-mariadb",
+      "mariadb"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "ef9f1ddbc6260eb36108c33bb7a0fea0b7e5ad37af38b71937ef7159e78f0510",
+    "EndpointID": "fd16a52b6ca763cba5673d3628ad5f9a4697fa4f15df628c5d6b98a96ba0e3ce",
+    "Gateway": "",
+    "IPAddress": "172.19.0.3",
+    "MacAddress": "e6:11:dd:6c:b6:65",
+    "IPPrefixLen": 16,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-mariadb",
+      "mariadb",
+      "62485b4a0254"
+    ]
+  }
+}

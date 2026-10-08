@@ -1,0 +1,26 @@
+{
+  "poisoned-pipeline_control_net": {
+    "IPAMConfig": null,
+    "Links": null,
+    "Aliases": [
+      "pp-jenkins",
+      "jenkins"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "ef9f1ddbc6260eb36108c33bb7a0fea0b7e5ad37af38b71937ef7159e78f0510",
+    "EndpointID": "8dd69a2581b366ad988e8d490239fa8fac875a410c3d15fad7fafa04d0bcd25d",
+    "Gateway": "",
+    "IPAddress": "172.19.0.4",
+    "MacAddress": "3e:44:78:a4:d8:32",
+    "IPPrefixLen": 16,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-jenkins",
+      "jenkins",
+      "429c05ef6b49"
+    ]
+  }
+}

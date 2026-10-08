@@ -1,0 +1,52 @@
+{
+  "poisoned-pipeline_control_net": {
+    "IPAMConfig": null,
+    "Links": null,
+    "Aliases": [
+      "pp-nginx",
+      "nginx"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "ef9f1ddbc6260eb36108c33bb7a0fea0b7e5ad37af38b71937ef7159e78f0510",
+    "EndpointID": "3266bb942f3e346ba5ec3f8b88c3bbc0e58091038ee3acc3be9cf7885eb15cc6",
+    "Gateway": "",
+    "IPAddress": "172.19.0.7",
+    "MacAddress": "2e:8a:f6:fa:81:7d",
+    "IPPrefixLen": 16,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-nginx",
+      "nginx",
+      "de06fa1e5036"
+    ]
+  },
+  "poisoned-pipeline_player_net": {
+    "IPAMConfig": {
+      "IPv4Address": "10.13.10.20"
+    },
+    "Links": null,
+    "Aliases": [
+      "pp-nginx",
+      "nginx"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "44711a95070e1d12557f6a728c33d38b181aad3b5d37ba783dbfcbb8fb867f20",
+    "EndpointID": "cd2f087afac9c9b42000b5dbea61a8cba54e0441e225cdb721f5055a38a25fae",
+    "Gateway": "10.13.10.1",
+    "IPAddress": "10.13.10.20",
+    "MacAddress": "42:65:38:97:99:53",
+    "IPPrefixLen": 24,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-nginx",
+      "nginx",
+      "de06fa1e5036"
+    ]
+  }
+}

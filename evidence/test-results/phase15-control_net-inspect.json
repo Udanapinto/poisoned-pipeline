@@ -1,0 +1,89 @@
+[
+    {
+        "Name": "poisoned-pipeline_control_net",
+        "Id": "ef9f1ddbc6260eb36108c33bb7a0fea0b7e5ad37af38b71937ef7159e78f0510",
+        "Created": "2026-10-07T02:17:54.840688889+05:30",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": true,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.config-hash": "202796bdea5af1d5c84a4188222ea083e1d6e74a6f1a6a2cf8f59021e076dd4d",
+            "com.docker.compose.network": "control_net",
+            "com.docker.compose.project": "poisoned-pipeline",
+            "com.docker.compose.version": "5.6.0"
+        },
+        "Containers": {
+            "429c05ef6b494baa1dd07218ee92aa32a7a22dba6aaadcd62eaf07a561a87296": {
+                "Name": "pp-jenkins",
+                "EndpointID": "8dd69a2581b366ad988e8d490239fa8fac875a410c3d15fad7fafa04d0bcd25d",
+                "MacAddress": "3e:44:78:a4:d8:32",
+                "IPv4Address": "172.19.0.4/16",
+                "IPv6Address": ""
+            },
+            "62485b4a025457aeaf9c884e24e10a62e10f16219525aacbffe0039a10663539": {
+                "Name": "pp-mariadb",
+                "EndpointID": "fd16a52b6ca763cba5673d3628ad5f9a4697fa4f15df628c5d6b98a96ba0e3ce",
+                "MacAddress": "e6:11:dd:6c:b6:65",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            },
+            "66c88e43ac1a8dbc56b89220c751912854834290ff0482b633ab0551bd32a6ae": {
+                "Name": "pp-ctfd",
+                "EndpointID": "94256dc228d767546b8aa9325a753174db7d851e19ed22b22fe068f16a3459b2",
+                "MacAddress": "ba:73:90:d0:ab:8d",
+                "IPv4Address": "172.19.0.6/16",
+                "IPv6Address": ""
+            },
+            "de06fa1e503613c5d6fc1fad309e84d804a34bd6c31ae5b49fffcd295c768e88": {
+                "Name": "pp-nginx",
+                "EndpointID": "3266bb942f3e346ba5ec3f8b88c3bbc0e58091038ee3acc3be9cf7885eb15cc6",
+                "MacAddress": "2e:8a:f6:fa:81:7d",
+                "IPv4Address": "172.19.0.7/16",
+                "IPv6Address": ""
+            },
+            "ef53e5745a7255970e27eac34f658a0137f3776eee7c7ede5c672a660e2d22f5": {
+                "Name": "pp-redis",
+                "EndpointID": "2c2bbec28870ab5704f8bae741197e6b94510f244c260377f7e2e5875069f3f8",
+                "MacAddress": "5e:b7:c2:7d:9b:ed",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "fa919ce03e1a5010caba11ad781ed26674ecae7fee4d9abfab028d1eeaad3de6": {
+                "Name": "pp-gitea",
+                "EndpointID": "e92986ae4d661e87fd070b1ff78f3a658bcd114811b90ea337cd3ea47e50d154",
+                "MacAddress": "42:cb:77:23:2a:37",
+                "IPv4Address": "172.19.0.5/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 9,
+                        "DynamicIPsAvailable": 65527
+                    }
+                }
+            }
+        }
+    }
+]

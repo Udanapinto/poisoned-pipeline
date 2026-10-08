@@ -1,0 +1,772 @@
+======================================================
+ Operation Poisoned Pipeline
+ Master Reset
+======================================================
+
+[1/8] Resetting S01 (Gitea)...
+==================================================
+ Operation Poisoned Pipeline
+ S01 Reset
+==================================================
+
+[+] Stopping Gitea...
+[+] Removing Gitea challenge volume: poisoned-pipeline_gitea_data
+[+] Recreating Gitea...
+[+] Waiting for Gitea startup...
+[+] Restarting Nginx...
+[+] Recreating Gitea admin...
+New user 'nexora' has been successfully created!
+[+] Verifying S01 bundle signature...
+Verified OK
+[PASS] S01 bundle verified.
+[+] Creating Gitea repository...
+[PASS] Repository exists.
+
+==================================================
+ S01 Gitea seed complete
+==================================================
+
+Repository:
+https://10.13.10.20/git/nexora/deployment-tools
+
+[+] Running S01 validation...
+
+======================================================
+ Operation Poisoned Pipeline
+ Phase 6 - S01 The Git Leak Verification
+======================================================
+
+[1;33m[INFO][0m Checking Gitea container...
+[0;32m[PASS][0m Gitea container is running
+[0;32m[PASS][0m Gitea has no host-published ports
+[0;32m[PASS][0m Gitea belongs only to control_net
+[0;32m[PASS][0m Gitea reachable through Nginx HTTPS
+[0;32m[PASS][0m S01 repository is anonymously readable
+[0;32m[PASS][0m S01 repository clone succeeds
+[0;32m[PASS][0m Current tree contains no S01 secret
+[0;32m[PASS][0m Git history contains S01 historical disclosure
+[0;32m[PASS][0m Git history contains Jenkins handoff credential
+[0;32m[PASS][0m Repository HEAD matches baseline
+[0;32m[PASS][0m Repository commit count matches baseline
+
+======================================================
+ RESULTS
+======================================================
+
+Passed: 11
+Failed: 0
+
+[0;32mPHASE 6 S01: PASSED[0m
+
+==================================================
+ S01 RESET COMPLETE
+==================================================
+
+[2/8] Resetting S02 (Jenkins)...
+==================================================
+ Operation Poisoned Pipeline
+ S02 Jenkins Reset
+==================================================
+
+[+] Stopping Jenkins...
+[+] Removing Jenkins challenge volume.
+[+] Recreating Jenkins...
+[+] Waiting for Jenkins health...
+[+] Restarting Nginx...
+[+] Re-seeding S02...
+==================================================
+ Operation Poisoned Pipeline
+ S02 Jenkins Seeder
+==================================================
+
+[+] Waiting for Jenkins...
+[+] Jenkins is available.
+[+] Administrator authentication successful.
+[+] Creating Jenkins job: nexora-release
+[+] Jenkins job created.
+[+] Setting historical build baseline to #101.
+[+] Jenkins accepted historical build-number update.
+[+] Jenkins reports next build number: 101
+[+] Historical build baseline verified.
+
+[+] Starting synthetic build #101
+[+] Build trigger returned HTTP 201
+[+] Build #101 completed successfully.
+
+[+] Starting synthetic build #102
+[+] Build trigger returned HTTP 201
+[+] Build #102 completed successfully.
+
+[+] Starting synthetic build #103
+[+] Build trigger returned HTTP 201
+[+] Build #103 completed successfully.
+
+[+] Starting synthetic build #104
+[+] Build trigger returned HTTP 201
+[+] Build #104 completed successfully.
+
+[+] Disabling historical job.
+[+] Historical Jenkins job disabled.
+
+[+] Verifying S02 artifact access as pipeline-reader.
+[+] pipeline-reader retrieved build #103 manifest.
+[+] pipeline-reader retrieved S03 evidence bundle.
+[+] S02 token confirmed in intended build artifact.
+[+] S03 evidence ZIP integrity verified.
+[+] S02 token confirmed in intended build artifact.
+[+] S03 evidence ZIP integrity verified.
+
+==================================================
+ S02 JENKINS SEED COMPLETE
+==================================================
+
+[+] Validating S02...
+======================================================
+ PHASE 7 - S02 PIPELINE BREACH VERIFICATION
+======================================================
+
+[PASS] Jenkins container exists
+[PASS] Jenkins backend port is not host-published
+[PASS] Jenkins has no Docker socket
+[PASS] Anonymous user cannot retrieve S02 manifest
+[PASS] Recovered S01 account can read Jenkins job
+[PASS] Build 103 artifact contains S02 token
+[PASS] Build console does not expose S02 token
+[PASS] Reader can download S03 evidence handoff
+[PASS] S03 evidence checksum matches baseline
+[PASS] Reader cannot retrieve job configuration
+[PASS] Build 101 does not expose S03 bundle
+[PASS] Build 102 does not expose S03 bundle
+[PASS] Build 104 does not expose S03 bundle
+
+======================================================
+ RESULTS
+======================================================
+
+Passed: 13
+Failed: 0
+
+PHASE 7 S02: PASSED
+
+==================================================
+ S02 RESET COMPLETE
+==================================================
+
+[3/8] Resetting S03 (Ghost Dependency)...
+==================================================
+ Operation Poisoned Pipeline
+ S03 Reset
+==================================================
+
+[+] Regenerating S03 evidence...
+==================================================
+ Operation Poisoned Pipeline
+ S03 Evidence Generator
+==================================================
+
+[+] Generating deterministic forensic evidence...
+[+] S03 evidence generated.
+[+] Exactly one four-indicator chain verified.
+[+] Player evidence contains no S03 flag.
+[+] Private answer manifest updated.
+[+] Signing evidence bundle...
+[+] Verifying signature...
+[+] Signature verified.
+[+] Current evidence matches baseline.
+
+==================================================
+ S03 EVIDENCE GENERATION COMPLETE
+==================================================
+
+[+] Re-seeding Jenkins build history...
+==================================================
+ Operation Poisoned Pipeline
+ S02 Jenkins Reset
+==================================================
+
+[+] Stopping Jenkins...
+[+] Removing Jenkins challenge volume.
+[+] Recreating Jenkins...
+[+] Waiting for Jenkins health...
+[+] Restarting Nginx...
+[+] Re-seeding S02...
+==================================================
+ Operation Poisoned Pipeline
+ S02 Jenkins Seeder
+==================================================
+
+[+] Waiting for Jenkins...
+[+] Jenkins is available.
+[+] Administrator authentication successful.
+[+] Creating Jenkins job: nexora-release
+[+] Jenkins job created.
+[+] Setting historical build baseline to #101.
+[+] Jenkins accepted historical build-number update.
+[+] Jenkins reports next build number: 101
+[+] Historical build baseline verified.
+
+[+] Starting synthetic build #101
+[+] Build trigger returned HTTP 201
+[+] Build #101 completed successfully.
+
+[+] Starting synthetic build #102
+[+] Build trigger returned HTTP 201
+[+] Build #102 completed successfully.
+
+[+] Starting synthetic build #103
+[+] Build trigger returned HTTP 201
+[+] Build #103 completed successfully.
+
+[+] Starting synthetic build #104
+[+] Build trigger returned HTTP 201
+[+] Build #104 completed successfully.
+
+[+] Disabling historical job.
+[+] Historical Jenkins job disabled.
+
+[+] Verifying S02 artifact access as pipeline-reader.
+[+] pipeline-reader retrieved build #103 manifest.
+[+] pipeline-reader retrieved S03 evidence bundle.
+[+] S02 token confirmed in intended build artifact.
+[+] S03 evidence ZIP integrity verified.
+[+] S02 token confirmed in intended build artifact.
+[+] S03 evidence ZIP integrity verified.
+
+==================================================
+ S02 JENKINS SEED COMPLETE
+==================================================
+
+[+] Validating S02...
+======================================================
+ PHASE 7 - S02 PIPELINE BREACH VERIFICATION
+======================================================
+
+[PASS] Jenkins container exists
+[PASS] Jenkins backend port is not host-published
+[PASS] Jenkins has no Docker socket
+[PASS] Anonymous user cannot retrieve S02 manifest
+[PASS] Recovered S01 account can read Jenkins job
+[PASS] Build 103 artifact contains S02 token
+[PASS] Build console does not expose S02 token
+[PASS] Reader can download S03 evidence handoff
+[PASS] S03 evidence checksum matches baseline
+[PASS] Reader cannot retrieve job configuration
+[PASS] Build 101 does not expose S03 bundle
+[PASS] Build 102 does not expose S03 bundle
+[PASS] Build 104 does not expose S03 bundle
+
+======================================================
+ RESULTS
+======================================================
+
+Passed: 13
+Failed: 0
+
+PHASE 7 S02: PASSED
+
+==================================================
+ S02 RESET COMPLETE
+==================================================
+
+[+] Verifying S03...
+======================================================
+ Phase 8 — S03 Ghost Dependency Verification
+======================================================
+
+[PASS] Required S03 file exists
+[PASS] Required S03 file exists
+[PASS] Required S03 file exists
+[PASS] Evidence bundle matches private baseline
+[PASS] Detached signature verifies
+[PASS] Player evidence contains no literal flag
+[PASS] Evidence SHA256SUMS validates
+[PASS] CycloneDX specification is 1.7
+[PASS] Exactly one component satisfies all four indicators
+[PASS] Independent analysis finds expected canonical PURL
+[PASS] Independent token derivation matches answer manifest
+[PASS] S03 token is 32 lowercase hex characters
+[PASS] Jenkins #103 exposes exact canonical S03 bundle
+[PASS] Build 101 does not expose S03 bundle
+[PASS] Build 102 does not expose S03 bundle
+[PASS] Build 104 does not expose S03 bundle
+[PASS] S03 -> S04 handoff values exist
+
+======================================================
+ RESULTS
+======================================================
+
+Passed: 17
+Failed: 0
+
+PHASE 8 S03: PASSED
+
+==================================================
+ S03 RESET COMPLETE
+==================================================
+
+[4/8] Resetting S04 (Poisoned Runtime)...
+==============================================
+ Operation Poisoned Pipeline
+ S04 Poisoned Runtime Reset
+==============================================
+
+[+] Recreating Application Challenge container...
+
+[+] Waiting for application healthcheck...
+[+] Application is healthy.
+
+[+] Running Phase 10 verification...
+==============================================
+ Operation Poisoned Pipeline
+ Phase 10 - S04 Poisoned Runtime Verification
+==============================================
+
+[PASS] Application container exists
+[PASS] Application container is running
+[PASS] Application healthcheck is healthy
+[PASS] S04 diagnostics endpoint responds with 200
+[PASS] Injected command executes as pipeline-app (UID 10001)
+[PASS] Injected command does not run as root
+[PASS] Injected command recovers the expected S04 flag
+[PASS] S04 flag format is IE3132{PP_S04_<32 hex>}
+[PASS] S05 handoff clue references deploy-verify
+[PASS] S05 handoff clue references the trusted hook path
+[PASS] S05 flag is not present in Phase 10
+[PASS] S06 flag is not present in Phase 10
+[PASS] Flask PID 1 still runs as UID 10001
+[PASS] Flask process still has no effective Linux capabilities
+[PASS] SSH is listening on TCP 22 (Phase 12 state)
+[PASS] Passwordless sudo exists for /usr/local/bin/deploy-verify (Phase 11 state)
+[PASS] Passwordless sudo does NOT allow /bin/bash
+[PASS] Passwordless sudo does NOT allow /bin/sh
+[PASS] Passwordless sudo does NOT allow python
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Application has no host mounts
+[PASS] player_net address is 10.13.10.30
+[PASS] internal_net address is 10.13.20.1
+[PASS] Application has no host-published ports
+
+==============================================
+ RESULTS
+==============================================
+Passed: 27
+Failed: 0
+
+PHASE 10 S04: PASSED
+
+==============================================
+ PHASE 10 S04 RESET COMPLETE
+==============================================
+
+[5/8] Resetting S05 (Broken Trust)...
+==============================================
+ Operation Poisoned Pipeline
+ S05 Broken Trust Reset
+==============================================
+
+[+] Recreating Application Challenge container...
+
+[+] Waiting for application healthcheck...
+[+] Application is healthy.
+
+[+] Running Phase 11 verification...
+==============================================
+ Operation Poisoned Pipeline
+ Phase 11 - S05 Broken Trust Verification
+==============================================
+
+[PASS] Application container exists
+[PASS] Application container is running
+[PASS] Application healthcheck is healthy
+[PASS] pipeline-app may sudo /usr/local/bin/deploy-verify
+[PASS] pipeline-app may not sudo /bin/bash
+[PASS] pipeline-app may not sudo /bin/sh
+[PASS] pipeline-app may not sudo python
+[PASS] pipeline-app may not sudo find
+[PASS] pipeline-app cannot directly sudo /bin/bash
+[PASS] deploy-verify is installed and executable
+[PASS] deploy-verify is root:root 0755
+[PASS] verify.sh is root:pipeline-app 0775
+[PASS] pipeline-app can write to verify.sh
+[PASS] deployment.conf references the trusted hook
+[PASS] Escalation yields UID 0 inside the container
+[PASS] Escalation does not stay as pipeline-app
+[PASS] Escalation recovers the expected S05 flag
+[PASS] Escalation recovers the S06 pivot credential
+[PASS] pipeline-app cannot read /root/s05_flag.txt before escalation
+[PASS] pipeline-app cannot read /root/s06_pivot.txt before escalation
+[PASS] s05_flag.txt is root:root 0600
+[PASS] s06_pivot.txt is root:root 0600
+[PASS] S04 diagnostics endpoint is still functional
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Application has no host mounts
+[PASS] Flask PID 1 has no effective Linux capabilities
+[PASS] SSH is listening on TCP 22 (Phase 12 state)
+[PASS] player_net address is 10.13.10.30
+[PASS] internal_net address is 10.13.20.1
+[PASS] Application has no host-published ports
+
+==============================================
+ RESULTS
+==============================================
+Passed: 33
+Failed: 0
+
+PHASE 11 S05: PASSED
+
+==============================================
+ PHASE 11 S05 RESET COMPLETE
+==============================================
+
+[6/8] Resetting S06 (Behind the Firewall)...
+==============================================================
+ Operation Poisoned Pipeline
+ S06 Behind the Firewall Reset
+==============================================================
+
+[+] Stopping PostgreSQL...
+[+] Removing PostgreSQL challenge volume: poisoned-pipeline_postgres_data
+[+] Recreating PostgreSQL...
+[+] Waiting for PostgreSQL health...
+[+] PostgreSQL is healthy.
+[+] Re-seeding S06 database content...
+[+] Waiting for PostgreSQL to become ready...
+[+] PostgreSQL is ready.
+[+] Applying read-only role password...
+ALTER ROLE
+[+] Upserting final S06 record...
+INSERT 0 1
+[+] PostgreSQL S06 seeding complete.
+[+] Recreating Application Challenge container...
+[+] Waiting for application healthcheck...
+[+] Application is healthy.
+
+[+] Running Phase 12 verification...
+==============================================================
+ Operation Poisoned Pipeline
+ Phase 12 - S06 Behind the Firewall Verification
+==============================================================
+
+[PASS] private/s06/s06.env exists
+[PASS] PostgreSQL container exists
+[PASS] PostgreSQL container is running
+[PASS] PostgreSQL healthcheck is healthy
+[PASS] PostgreSQL is on internal_net
+[PASS] PostgreSQL is NOT on player_net
+[PASS] PostgreSQL is NOT on control_net
+[PASS] PostgreSQL internal_net address is 10.13.20.10
+[PASS] PostgreSQL has no host-published ports
+[PASS] sshd is listening on TCP 22 inside the application container
+[PASS] pivot account exists
+[PASS] /root/s06_pivot.txt is root:root 0600
+[PASS] pipeline-app cannot read /root/s06_pivot.txt before escalation
+[PASS] ctf_final row exists in nexora_prod
+[PASS] ctf_reader can read the S06 flag via SELECT
+[PASS] ctf_reader cannot INSERT
+[PASS] ctf_reader cannot UPDATE
+[PASS] ctf_reader cannot DELETE
+[PASS] player_net cannot reach PostgreSQL directly
+[PASS] Application player_net address is 10.13.10.30
+[PASS] Application internal_net address is 10.13.20.1
+
+[*] Running end-to-end tunnel test from a player_net peer...
+[PASS] End-to-end pivot from player_net recovers the S06 flag
+
+==============================================================
+ RESULTS
+==============================================================
+Passed: 22
+Failed: 0
+
+PHASE 12 S06: PASSED
+
+==============================================================
+ PHASE 12 S06 RESET COMPLETE
+==============================================================
+
+[7/8] Resetting Kali participant...
+==========================================
+ Operation Poisoned Pipeline
+ Phase 13 Kali Reset
+==========================================
+
+[+] Recreating Kali participant container...
+[+] Waiting for Kali to be ready...
+[+] Kali is ready.
+
+[+] Running Phase 13 verification...
+======================================================
+ Operation Poisoned Pipeline
+ Phase 13 - Kali Participant Verification
+======================================================
+
+[PASS] Kali container exists
+[PASS] Kali container is running
+[PASS] Kali is on player_net
+[PASS] Kali is NOT on control_net
+[PASS] Kali is NOT on internal_net
+[PASS] Kali player_net address is 10.13.10.10
+[PASS] Tool available: git
+[PASS] Tool available: curl
+[PASS] Tool available: jq
+[PASS] Tool available: python3
+[PASS] Tool available: nmap
+[PASS] Tool available: proxychains4
+[PASS] Tool available: ssh
+[PASS] Tool available: psql
+[PASS] Tool available: nc
+[PASS] Tool available: sshpass
+[PASS] Kali can reach Application TCP 5000
+[PASS] Kali can reach Nginx HTTPS (200)
+[PASS] Kali cannot reach PostgreSQL directly
+[PASS] Kali cannot reach Gitea directly
+[PASS] Kali cannot reach Jenkins directly
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Kali has minimal host mounts
+
+======================================================
+ RESULTS
+======================================================
+Passed: 26
+Failed: 0
+
+PHASE 13 KALI: PASSED
+
+==========================================
+ PHASE 13 KALI RESET COMPLETE
+==========================================
+
+[8/8] Verifying all stages...
+======================================================
+ Phase 8 — S03 Ghost Dependency Verification
+======================================================
+
+[PASS] Required S03 file exists
+[PASS] Required S03 file exists
+[PASS] Required S03 file exists
+[PASS] Evidence bundle matches private baseline
+[PASS] Detached signature verifies
+[PASS] Player evidence contains no literal flag
+[PASS] Evidence SHA256SUMS validates
+[PASS] CycloneDX specification is 1.7
+[PASS] Exactly one component satisfies all four indicators
+[PASS] Independent analysis finds expected canonical PURL
+[PASS] Independent token derivation matches answer manifest
+[PASS] S03 token is 32 lowercase hex characters
+[PASS] Jenkins #103 exposes exact canonical S03 bundle
+[PASS] Build 101 does not expose S03 bundle
+[PASS] Build 102 does not expose S03 bundle
+[PASS] Build 104 does not expose S03 bundle
+[PASS] S03 -> S04 handoff values exist
+
+======================================================
+ RESULTS
+======================================================
+
+Passed: 17
+Failed: 0
+
+PHASE 8 S03: PASSED
+==============================================
+ Operation Poisoned Pipeline
+ Phase 10 - S04 Poisoned Runtime Verification
+==============================================
+
+[PASS] Application container exists
+[PASS] Application container is running
+[PASS] Application healthcheck is healthy
+[PASS] S04 diagnostics endpoint responds with 200
+[PASS] Injected command executes as pipeline-app (UID 10001)
+[PASS] Injected command does not run as root
+[PASS] Injected command recovers the expected S04 flag
+[PASS] S04 flag format is IE3132{PP_S04_<32 hex>}
+[PASS] S05 handoff clue references deploy-verify
+[PASS] S05 handoff clue references the trusted hook path
+[PASS] S05 flag is not present in Phase 10
+[PASS] S06 flag is not present in Phase 10
+[PASS] Flask PID 1 still runs as UID 10001
+[PASS] Flask process still has no effective Linux capabilities
+[PASS] SSH is listening on TCP 22 (Phase 12 state)
+[PASS] Passwordless sudo exists for /usr/local/bin/deploy-verify (Phase 11 state)
+[PASS] Passwordless sudo does NOT allow /bin/bash
+[PASS] Passwordless sudo does NOT allow /bin/sh
+[PASS] Passwordless sudo does NOT allow python
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Application has no host mounts
+[PASS] player_net address is 10.13.10.30
+[PASS] internal_net address is 10.13.20.1
+[PASS] Application has no host-published ports
+
+==============================================
+ RESULTS
+==============================================
+Passed: 27
+Failed: 0
+
+PHASE 10 S04: PASSED
+==============================================
+ Operation Poisoned Pipeline
+ Phase 11 - S05 Broken Trust Verification
+==============================================
+
+[PASS] Application container exists
+[PASS] Application container is running
+[PASS] Application healthcheck is healthy
+[PASS] pipeline-app may sudo /usr/local/bin/deploy-verify
+[PASS] pipeline-app may not sudo /bin/bash
+[PASS] pipeline-app may not sudo /bin/sh
+[PASS] pipeline-app may not sudo python
+[PASS] pipeline-app may not sudo find
+[PASS] pipeline-app cannot directly sudo /bin/bash
+[PASS] deploy-verify is installed and executable
+[PASS] deploy-verify is root:root 0755
+[PASS] verify.sh is root:pipeline-app 0775
+[PASS] pipeline-app can write to verify.sh
+[PASS] deployment.conf references the trusted hook
+[PASS] Escalation yields UID 0 inside the container
+[PASS] Escalation does not stay as pipeline-app
+[PASS] Escalation recovers the expected S05 flag
+[PASS] Escalation recovers the S06 pivot credential
+[PASS] pipeline-app cannot read /root/s05_flag.txt before escalation
+[PASS] pipeline-app cannot read /root/s06_pivot.txt before escalation
+[PASS] s05_flag.txt is root:root 0600
+[PASS] s06_pivot.txt is root:root 0600
+[PASS] S04 diagnostics endpoint is still functional
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Application has no host mounts
+[PASS] Flask PID 1 has no effective Linux capabilities
+[PASS] SSH is listening on TCP 22 (Phase 12 state)
+[PASS] player_net address is 10.13.10.30
+[PASS] internal_net address is 10.13.20.1
+[PASS] Application has no host-published ports
+
+==============================================
+ RESULTS
+==============================================
+Passed: 33
+Failed: 0
+
+PHASE 11 S05: PASSED
+==============================================================
+ Operation Poisoned Pipeline
+ Phase 12 - S06 Behind the Firewall Verification
+==============================================================
+
+[PASS] private/s06/s06.env exists
+[PASS] PostgreSQL container exists
+[PASS] PostgreSQL container is running
+[PASS] PostgreSQL healthcheck is healthy
+[PASS] PostgreSQL is on internal_net
+[PASS] PostgreSQL is NOT on player_net
+[PASS] PostgreSQL is NOT on control_net
+[PASS] PostgreSQL internal_net address is 10.13.20.10
+[PASS] PostgreSQL has no host-published ports
+[PASS] sshd is listening on TCP 22 inside the application container
+[PASS] pivot account exists
+[PASS] /root/s06_pivot.txt is root:root 0600
+[PASS] pipeline-app cannot read /root/s06_pivot.txt before escalation
+[PASS] ctf_final row exists in nexora_prod
+[PASS] ctf_reader can read the S06 flag via SELECT
+[PASS] ctf_reader cannot INSERT
+[PASS] ctf_reader cannot UPDATE
+[PASS] ctf_reader cannot DELETE
+[PASS] player_net cannot reach PostgreSQL directly
+[PASS] Application player_net address is 10.13.10.30
+[PASS] Application internal_net address is 10.13.20.1
+
+[*] Running end-to-end tunnel test from a player_net peer...
+[PASS] End-to-end pivot from player_net recovers the S06 flag
+
+==============================================================
+ RESULTS
+==============================================================
+Passed: 22
+Failed: 0
+
+PHASE 12 S06: PASSED
+======================================================
+ Operation Poisoned Pipeline
+ Phase 13 - Kali Participant Verification
+======================================================
+
+[PASS] Kali container exists
+[PASS] Kali container is running
+[PASS] Kali is on player_net
+[PASS] Kali is NOT on control_net
+[PASS] Kali is NOT on internal_net
+[PASS] Kali player_net address is 10.13.10.10
+[PASS] Tool available: git
+[PASS] Tool available: curl
+[PASS] Tool available: jq
+[PASS] Tool available: python3
+[PASS] Tool available: nmap
+[PASS] Tool available: proxychains4
+[PASS] Tool available: ssh
+[PASS] Tool available: psql
+[PASS] Tool available: nc
+[PASS] Tool available: sshpass
+[PASS] Kali can reach Application TCP 5000
+[PASS] Kali can reach Nginx HTTPS (200)
+[PASS] Kali cannot reach PostgreSQL directly
+[PASS] Kali cannot reach Gitea directly
+[PASS] Kali cannot reach Jenkins directly
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Kali has minimal host mounts
+
+======================================================
+ RESULTS
+======================================================
+Passed: 26
+Failed: 0
+
+PHASE 13 KALI: PASSED
+======================================================
+ Operation Poisoned Pipeline
+ Phase 14 - CTFd Integration Verification
+======================================================
+
+[PASS] CTFd is reachable through Nginx (200)
+[PASS] CTFd container is healthy
+[PASS] pp-mariadb is on control_net only
+[PASS] pp-redis is on control_net only
+[PASS] Nginx spans player_net and control_net
+[PASS] pp-mariadb has no host-published ports
+[PASS] pp-redis has no host-published ports
+[PASS] pp-ctfd has no host-published ports
+[PASS] pp-gitea has no host-published ports
+[PASS] pp-jenkins has no host-published ports
+[PASS] pp-postgres has no host-published ports
+[PASS] Nginx publishes TCP 443
+[PASS] Nginx does not publish backend ports
+[PASS] CTFd can reach MariaDB and Redis
+[PASS] CTFd external egress is blocked
+
+======================================================
+ RESULTS
+======================================================
+Passed: 15
+Failed: 0
+
+PHASE 14 CTFD: PASSED
+
+======================================================
+ ALL RESETS COMPLETE
+======================================================
