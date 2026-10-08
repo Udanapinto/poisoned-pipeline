@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 # =============================================================
 # Operation Poisoned Pipeline
-# fast_reset.sh — instant restore from golden-seed.tar.gz
+# fast_reset.sh
+#
+# Instantly restores the environment to the golden state
+# captured by create_golden_seed.sh.
+#
+# Workflow:
+#   1. Verify golden-seed.tar.gz exists (failsafe)
+#   2. Tear down the current environment
+#   3. Delete and recreate all named volumes from the seed
+#   4. Restore private/ and config paths from the seed
+#   5. Bring the stack back up
 # =============================================================
 
 set -euo pipefail
 
+# ─────────────────────────────────────────────────────────────
+# Configuration (must match create_golden_seed.sh)
+# ─────────────────────────────────────────────────────────────
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
@@ -24,6 +37,9 @@ VOLUMES=(
     "${PROJECT_NAME}_postgres_data"
 )
 
+# ─────────────────────────────────────────────────────────────
+# Colors
+# ─────────────────────────────────────────────────────────────
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
@@ -38,7 +54,7 @@ err()  { echo -e "${RED}[FAIL]${RESET} $*"; }
 step() { echo -e "\n${BOLD}${BLUE}▶ $*${RESET}"; }
 
 # ─────────────────────────────────────────────────────────────
-# FAILSAFE: verify golden seed BEFORE anything destructive
+# FAILSAFE: verify the golden seed exists BEFORE anything destructive
 # ─────────────────────────────────────────────────────────────
 step "Failsafe checks"
 
@@ -49,6 +65,7 @@ if [[ ! -f "${SEED_FILE}" ]]; then
 fi
 pass "Golden seed found: ${SEED_FILE} ($(du -h "${SEED_FILE}" | cut -f1))"
 
+# Verify it's a valid gzip archive
 if ! tar tzf "${SEED_FILE}" >/dev/null 2>&1; then
     err "Golden seed is not a valid tar.gz archive — refusing to wipe data."
     exit 1
@@ -67,25 +84,16 @@ if [[ ! -f "${ROOT_DIR}/compose.yml" ]]; then
 fi
 pass "compose.yml found"
 
-# ---- Volume snapshot check --------------------------------------
-# Simpler and more robust than grep: load the listing into a bash
-# variable and use a substring test. Works regardless of whether
-# tar prefixes paths with "./" or not.
-ARCHIVE_LISTING="$(tar tzf "${SEED_FILE}" 2>/dev/null || true)"
-
-if [[ "${ARCHIVE_LISTING}" != *"volumes/"* ]]; then
+# Sanity: check the seed contains at least one volume snapshot.
+# tar implementations differ on whether they prefix entries with "./",
+# so we match on "volumes/" or on a specific volume filename.
+if ! tar tzf "${SEED_FILE}" | grep -qE '(^|/)volumes/|mariadb_data\.tar\.gz'; then
     err "Golden seed does not contain any volume snapshots — refusing to wipe data."
     exit 1
 fi
 pass "Golden seed contains volume snapshots"
 
-if [[ "${ARCHIVE_LISTING}" != *"mariadb_data.tar.gz"* ]]; then
-    err "Golden seed is missing the critical mariadb_data volume — refusing to wipe data."
-    exit 1
-fi
-pass "Golden seed contains the MariaDB (CTFd database) snapshot"
-
-# ---- Optional confirmation prompt --------------------------------
+# Optional prompt
 if [[ "${FORCE:-0}" != "1" && -t 0 ]]; then
     echo
     echo -e "${YELLOW}This will DELETE all current challenge state and restore the golden seed.${RESET}"
@@ -97,7 +105,7 @@ if [[ "${FORCE:-0}" != "1" && -t 0 ]]; then
 fi
 
 # ─────────────────────────────────────────────────────────────
-# Extract seed to a temp dir
+# Extract seed to temp dir
 # ─────────────────────────────────────────────────────────────
 step "Extracting golden seed"
 
@@ -114,12 +122,12 @@ if [[ -f "${TMP_DIR}/metadata.txt" ]]; then
 fi
 
 # ─────────────────────────────────────────────────────────────
-# Tear down current environment
+# Stop and remove all containers
 # ─────────────────────────────────────────────────────────────
 step "Tearing down the current environment"
 
 docker compose down --remove-orphans
-pass "Containers and networks removed (volumes preserved)"
+pass "Containers, networks removed (volumes preserved)"
 
 # ─────────────────────────────────────────────────────────────
 # Remove current volumes
@@ -132,12 +140,12 @@ for VOL in "${VOLUMES[@]}"; do
         docker volume rm "${VOL}" >/dev/null
         pass "  → removed"
     else
-        info "Volume not present: ${VOL}"
+        info "Volume not present — nothing to remove: ${VOL}"
     fi
 done
 
 # ─────────────────────────────────────────────────────────────
-# Recreate volumes from the seed
+# Recreate volumes from the golden seed
 # ─────────────────────────────────────────────────────────────
 step "Recreating volumes from golden seed"
 
@@ -155,7 +163,8 @@ for VOL in "${VOLUMES[@]}"; do
         -v "${VOL}:/target" \
         -v "${TMP_DIR}/volumes:/backup:ro" \
         "${ALPINE_IMAGE}" \
-        tar xzf "/backup/${VOL}.tar.gz" -C /target --numeric-owner
+        tar xzf "/backup/${VOL}.tar.gz" -C /target \
+        --numeric-owner
 
     pass "  → ${VOL} restored"
 done
@@ -174,13 +183,16 @@ for REL_PATH in ${CONFIG_PATHS}; do
     fi
 
     info "Restoring: ${REL_PATH}"
+
+    # Remove old directory contents, then extract fresh
     rm -rf "${ROOT_DIR:?}/${REL_PATH}"
     tar xzf "${SNAPSHOT}" -C "${ROOT_DIR}" --numeric-owner
+
     pass "  → ${REL_PATH} restored"
 done
 
 # ─────────────────────────────────────────────────────────────
-# Start the stack
+# Bring the stack back up
 # ─────────────────────────────────────────────────────────────
 step "Starting the environment"
 
@@ -224,14 +236,15 @@ done
 # ─────────────────────────────────────────────────────────────
 step "Verifying reachability"
 
+# Give Nginx a moment to resolve the new backend containers
 sleep 5
 
 CODE_CTFD="$(curl -k -s -o /dev/null -w '%{http_code}' https://10.13.10.20/ 2>/dev/null || echo 000)"
 CODE_GITEA="$(curl -k -s -o /dev/null -w '%{http_code}' https://10.13.10.20/git/ 2>/dev/null || echo 000)"
 CODE_JENKINS="$(curl -k -s -o /dev/null -w '%{http_code}' https://10.13.10.20/jenkins/login 2>/dev/null || echo 000)"
 
-[[ "${CODE_CTFD}"    =~ ^(200|302)$ ]] && pass "CTFd reachable (${CODE_CTFD})"       || warn "CTFd reachable? HTTP ${CODE_CTFD}"
-[[ "${CODE_GITEA}"   =~ ^(200|302)$ ]] && pass "Gitea reachable (${CODE_GITEA})"     || warn "Gitea reachable? HTTP ${CODE_GITEA}"
+[[ "${CODE_CTFD}" =~ ^(200|302)$ ]] && pass "CTFd reachable (${CODE_CTFD})" || warn "CTFd reachable? HTTP ${CODE_CTFD}"
+[[ "${CODE_GITEA}" =~ ^(200|302)$ ]] && pass "Gitea reachable (${CODE_GITEA})" || warn "Gitea reachable? HTTP ${CODE_GITEA}"
 [[ "${CODE_JENKINS}" =~ ^(200|302)$ ]] && pass "Jenkins reachable (${CODE_JENKINS})" || warn "Jenkins reachable? HTTP ${CODE_JENKINS}"
 
 echo
