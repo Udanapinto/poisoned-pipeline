@@ -1,0 +1,35 @@
+======================================================
+ Operation Poisoned Pipeline
+ Resource Measurement
+======================================================
+
+[+] Container resource usage (docker stats --no-stream):
+
+NAME             CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O
+pp-mariadb       0.03%     12.71MiB / 4.522GiB   0.27%     967kB / 1.32MB    204MB / 38.8MB
+pp-redis         0.80%     5.008MiB / 4.522GiB   0.11%     39.6MB / 67.3MB   158MB / 515MB
+pp-ctfd          0.10%     71.37MiB / 4.522GiB   1.54%     69.1MB / 42.3MB   338MB / 253MB
+pp-gitea         0.44%     88.85MiB / 4.522GiB   1.92%     44.2kB / 67.7kB   227MB / 229MB
+pp-jenkins       0.57%     282.9MiB / 4.522GiB   6.11%     332kB / 1.23MB    163MB / 121MB
+pp-postgres      13.11%    33.78MiB / 4.522GiB   0.73%     13.2kB / 4.6kB    69.4MB / 54.7MB
+pp-application   0.03%     25.68MiB / 4.522GiB   0.55%     42.7kB / 26.4kB   27MB / 45.1kB
+pp-kali          0.00%     20.31MiB / 4.522GiB   0.44%     207kB / 90.6kB    42.1MB / 1.38MB
+pp-nginx         0.00%     11.02MiB / 4.522GiB   0.24%     2.47MB / 2.65MB   5.92MB / 4.1kB
+
+[+] Host memory:
+               total        used        free      shared  buff/cache   available
+Mem:           4.5Gi       2.7Gi       220Mi        58Mi       2.0Gi       1.9Gi
+Swap:          3.8Gi       1.6Gi       2.1Gi
+
+[+] Host disk usage:
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2        40G   34G  3.9G  90% /
+
+[+] Docker system usage:
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          19        12        5.649GB   15.04MB (0%)
+Containers      12        9         517.2MB   384.9MB (74%)
+Local Volumes   11        11        630.9MB   0B (0%)
+Build Cache     122       4         2.342GB   106.9MB
+
+[+] Resource measurement complete.

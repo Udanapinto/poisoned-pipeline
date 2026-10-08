@@ -1,0 +1,43 @@
+======================================================
+ Operation Poisoned Pipeline
+ Clean Deploy Verification
+======================================================
+
+[PASS] Docker Compose configuration is valid
+[PASS] Service defined: mariadb
+[PASS] Service defined: redis
+[PASS] Service defined: ctfd
+[PASS] Service defined: gitea
+[PASS] Service defined: jenkins
+[PASS] Service defined: postgres
+[PASS] Service defined: application
+[PASS] Service defined: kali
+[PASS] Service defined: nginx
+[PASS] Network defined: player_net
+[PASS] Network defined: control_net
+[PASS] Network defined: internal_net
+[PASS] Volume defined: mariadb_data
+[PASS] Volume defined: redis_data
+[PASS] Volume defined: ctfd_uploads
+[PASS] Volume defined: ctfd_logs
+[PASS] Volume defined: gitea_data
+[PASS] Volume defined: jenkins_data
+[PASS] Volume defined: postgres_data
+[PASS] No floating latest tags (excluding Kali base)
+[PASS] pp-mariadb is running
+[PASS] pp-redis is running
+[PASS] pp-ctfd is running
+[PASS] pp-gitea is running
+[PASS] pp-jenkins is running
+[PASS] pp-postgres is running
+[PASS] pp-application is running
+[PASS] pp-kali is running
+[PASS] pp-nginx is running
+
+======================================================
+ RESULTS
+======================================================
+Passed: 30
+Failed: 0
+
+CLEAN DEPLOY: PASSED
