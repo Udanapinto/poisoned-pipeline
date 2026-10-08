@@ -1,0 +1,28 @@
+======================================================
+ Operation Poisoned Pipeline
+ Reproducibility Verification
+======================================================
+
+[PASS] Build manifest exists
+[PASS] nginx digest matches manifest
+[PASS] ctfd digest matches manifest
+[PASS] mariadb digest matches manifest
+[PASS] redis digest matches manifest
+[PASS] gitea digest matches manifest
+[PASS] postgres digest matches manifest
+[PASS] Git bundle checksum matches manifest
+[PASS] S03 evidence checksum matches manifest
+[PASS] PostgreSQL seed checksum matches manifest
+[PASS] pp-mariadb is healthy
+[PASS] pp-redis is healthy
+[PASS] pp-ctfd is healthy
+[PASS] pp-postgres is healthy
+[PASS] pp-application is healthy
+
+======================================================
+ RESULTS
+======================================================
+Passed: 15
+Failed: 0
+
+REPRODUCIBILITY: PASSED
