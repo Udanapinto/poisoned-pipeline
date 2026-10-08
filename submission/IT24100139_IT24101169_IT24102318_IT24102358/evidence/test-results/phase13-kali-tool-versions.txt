@@ -1,0 +1,6 @@
+]633;E;echo "Kali tool versions";861ae67f-d5ea-42bf-9b06-49e53c6accaa]633;CKali tool versions
+==================
+git version 2.53.0
+Python 3.14.7
+
+psql (PostgreSQL) 18.6 (Debian 18.6-3)

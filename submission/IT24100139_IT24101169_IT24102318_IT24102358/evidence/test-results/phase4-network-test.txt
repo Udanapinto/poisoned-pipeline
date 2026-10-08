@@ -1,0 +1,31 @@
+
+=================================================
+ Operation Poisoned Pipeline
+ Phase 4 Network Verification
+=================================================
+
+[1;33m[INFO][0m Checking Docker networks...
+[0;32m[PASS][0m player_net exists
+[0;32m[PASS][0m control_net exists
+[0;32m[PASS][0m internal_net exists
+
+[1;33m[INFO][0m Checking intended connectivity...
+[0;32m[PASS][0m Kali can reach Application on player_net
+[0;32m[PASS][0m Application can reach Database on internal_net
+
+[1;33m[INFO][0m Checking forbidden connectivity...
+[0;32m[PASS][0m Kali cannot directly reach Database
+[0;32m[PASS][0m Kali cannot resolve/reach control container
+
+[1;33m[INFO][0m Checking protected-network external isolation...
+[0;32m[PASS][0m Database cannot directly reach Internet
+[0;32m[PASS][0m Control container cannot directly reach Internet
+
+=================================================
+ RESULTS
+=================================================
+
+Passed: 9
+Failed: 0
+
+[0;32mPHASE 4 NETWORK TEST: PASSED[0m

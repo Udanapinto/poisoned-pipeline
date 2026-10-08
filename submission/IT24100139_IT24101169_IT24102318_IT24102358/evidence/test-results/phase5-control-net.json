@@ -1,0 +1,75 @@
+[
+    {
+        "Name": "poisoned-pipeline_control_net",
+        "Id": "1ef30734417909831879a6452facb30baaaee44c6ca9943d1d9ab57ff0ddf01c",
+        "Created": "2026-09-17T11:40:54.572941633+05:30",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": true,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.config-hash": "202796bdea5af1d5c84a4188222ea083e1d6e74a6f1a6a2cf8f59021e076dd4d",
+            "com.docker.compose.network": "control_net",
+            "com.docker.compose.project": "poisoned-pipeline",
+            "com.docker.compose.version": "5.5.1"
+        },
+        "Containers": {
+            "37ce3b28d219710fcc9d4cdc2ac8fa702c2f9651b2727a5e3645c0d91140d3c3": {
+                "Name": "pp-redis",
+                "EndpointID": "4997ac9a308776b5a97a888423563b60b38fc17dc3900be8a98ef276d19ae751",
+                "MacAddress": "8e:d2:64:4a:48:60",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            },
+            "47ad193a133ac767eb54884f716a71f4df917fd9d912b7e71fa978a2394ed145": {
+                "Name": "pp-mariadb",
+                "EndpointID": "8c929124d80acf4f9503abe969d7df0300c0a4dd1aa67a8ad7fd222551e52b28",
+                "MacAddress": "32:d9:cf:e6:83:b0",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            },
+            "7453e5dd69e8d70ced85e40ecb6d4865980f94a1624be46b2bcd1fb964a39777": {
+                "Name": "pp-ctfd",
+                "EndpointID": "bcb00e3c130c97771a62b79a20ac7f14baab3b090fbf411d4727fbd0618e70e7",
+                "MacAddress": "82:62:e3:85:b6:04",
+                "IPv4Address": "172.18.0.4/16",
+                "IPv6Address": ""
+            },
+            "b09e18198b2857bf212422f0f0a4ca74441dbd3dadc67899b0b6aa12c56b3840": {
+                "Name": "pp-nginx",
+                "EndpointID": "c1e6db65ef7ac93e37baf52cc605ae9cbf87239e95062f1e3b76068cf2c80131",
+                "MacAddress": "9e:70:b7:04:52:1e",
+                "IPv4Address": "172.18.0.5/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.18.0.0/16": {
+                        "IPsInUse": 7,
+                        "DynamicIPsAvailable": 65529
+                    }
+                }
+            }
+        }
+    }
+]

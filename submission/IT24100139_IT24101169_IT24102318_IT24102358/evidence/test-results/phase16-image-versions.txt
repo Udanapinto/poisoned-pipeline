@@ -1,0 +1,12 @@
+]633;E;echo "Operation Poisoned Pipeline - Image Versions";5b695197-9bd7-4a41-82a2-dc9412d7afe4]633;COperation Poisoned Pipeline - Image Versions
+=============================================
+
+nginx:1.28.0-alpine
+ctfd/ctfd:3.8.7
+mariadb:11.4.13
+redis:7.4.0-alpine
+gitea/gitea:1.27.0
+jenkins/jenkins:lts-jdk21
+postgres:16.4-bookworm
+python:3.9.25-slim-bookworm
+kalilinux/kali-rolling:latest

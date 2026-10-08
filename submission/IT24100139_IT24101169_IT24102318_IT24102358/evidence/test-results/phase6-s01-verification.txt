@@ -1,0 +1,27 @@
+
+======================================================
+ Operation Poisoned Pipeline
+ Phase 6 - S01 The Git Leak Verification
+======================================================
+
+[1;33m[INFO][0m Checking Gitea container...
+[0;32m[PASS][0m Gitea container is running
+[0;32m[PASS][0m Gitea has no host-published ports
+[0;32m[PASS][0m Gitea belongs only to control_net
+[0;32m[PASS][0m Gitea reachable through Nginx HTTPS
+[0;32m[PASS][0m S01 repository is anonymously readable
+[0;32m[PASS][0m S01 repository clone succeeds
+[0;32m[PASS][0m Current tree contains no S01 secret
+[0;32m[PASS][0m Git history contains S01 historical disclosure
+[0;32m[PASS][0m Git history contains Jenkins handoff credential
+[0;32m[PASS][0m Repository HEAD matches baseline
+[0;32m[PASS][0m Repository commit count matches baseline
+
+======================================================
+ RESULTS
+======================================================
+
+Passed: 11
+Failed: 0
+
+[0;32mPHASE 6 S01: PASSED[0m

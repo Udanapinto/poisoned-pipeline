@@ -1,0 +1,31 @@
+{
+  "poisoned-pipeline_internal_net": {
+    "IPAMConfig": {
+      "IPv4Address": "10.13.20.10"
+    },
+    "Links": null,
+    "Aliases": [
+      "pp-postgres",
+      "postgres",
+      "postgres",
+      "nexora-db"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "e817d571d6b8c90e2297bccac156e0c5063786f703d42fa881d1a6c6811b8510",
+    "EndpointID": "1f098f02ad035067fa4ac9ef96b5103520b58c6795653ca774cf818f03ba09dd",
+    "Gateway": "",
+    "IPAddress": "10.13.20.10",
+    "MacAddress": "06:93:c7:06:b3:3a",
+    "IPPrefixLen": 24,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-postgres",
+      "postgres",
+      "nexora-db",
+      "fc57ba4e85b4"
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+#!/bin/bash
+# Nexora deployment verification utility.
+#
+# Invoked by sudo during release-promotion validation.
+# Reads /opt/nexora/config/deployment.conf and executes the
+# configured validation hook with the effective privileges of
+# the sudo target (root).
+
+set -eu
+
+CONFIG_FILE="/opt/nexora/config/deployment.conf"
+
+if [ ! -r "$CONFIG_FILE" ]; then
+    echo "[deploy-verify] configuration missing: $CONFIG_FILE" >&2
+    exit 1
+fi
+
+validation_hook="$(awk -F= '/^validation_hook=/ {print $2; exit}' "$CONFIG_FILE")"
+
+if [ -z "${validation_hook:-}" ]; then
+    echo "[deploy-verify] no validation hook configured" >&2
+    exit 1
+fi
+
+if [ ! -x "$validation_hook" ]; then
+    echo "[deploy-verify] validation hook missing or not executable: $validation_hook" >&2
+    exit 1
+fi
+
+echo "[deploy-verify] config:  $CONFIG_FILE"
+echo "[deploy-verify] hook:    $validation_hook"
+echo "[deploy-verify] running validation hook"
+
+exec "$validation_hook"

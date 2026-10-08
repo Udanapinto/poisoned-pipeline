@@ -1,0 +1,26 @@
+{
+  "poisoned-pipeline_control_net": {
+    "IPAMConfig": null,
+    "Links": null,
+    "Aliases": [
+      "pp-gitea",
+      "gitea"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "ef9f1ddbc6260eb36108c33bb7a0fea0b7e5ad37af38b71937ef7159e78f0510",
+    "EndpointID": "e92986ae4d661e87fd070b1ff78f3a658bcd114811b90ea337cd3ea47e50d154",
+    "Gateway": "",
+    "IPAddress": "172.19.0.5",
+    "MacAddress": "42:cb:77:23:2a:37",
+    "IPPrefixLen": 16,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-gitea",
+      "gitea",
+      "fa919ce03e1a"
+    ]
+  }
+}

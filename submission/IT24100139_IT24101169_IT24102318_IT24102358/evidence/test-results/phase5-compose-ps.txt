@@ -1,0 +1,5 @@
+NAME         IMAGE                 COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+pp-ctfd      ctfd/ctfd:3.8.7       "/opt/CTFd/docker-en…"   ctfd      33 minutes ago   Up 33 minutes (healthy)   8000/tcp
+pp-mariadb   mariadb:11.4.13       "docker-entrypoint.s…"   mariadb   39 minutes ago   Up 39 minutes (healthy)   3306/tcp
+pp-nginx     nginx:1.28.0-alpine   "/docker-entrypoint.…"   nginx     28 minutes ago   Up 28 minutes             80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+pp-redis     redis:7.4.0-alpine    "docker-entrypoint.s…"   redis     34 minutes ago   Up 34 minutes (healthy)   6379/tcp

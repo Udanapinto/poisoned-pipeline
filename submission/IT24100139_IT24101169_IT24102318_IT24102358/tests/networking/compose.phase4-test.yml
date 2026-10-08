@@ -1,0 +1,94 @@
+services:
+
+  # ========================================================
+  # Simulates the future Kali participant container
+  # ========================================================
+  phase4-kali:
+    image: alpine:3.20
+    container_name: pp-phase4-kali
+
+    command:
+      - sh
+      - -c
+      - |
+        echo "Phase 4 Kali simulator started"
+        sleep infinity
+
+    networks:
+      player_net:
+        ipv4_address: 10.13.10.10
+
+
+  # ========================================================
+  # Simulates the future Application Challenge
+  #
+  # IMPORTANT:
+  # Connected to BOTH player_net and internal_net.
+  # ========================================================
+  phase4-application:
+    image: alpine:3.20
+    container_name: pp-phase4-application
+
+    command:
+      - sh
+      - -c
+      - |
+        echo "Phase 4 Application simulator started"
+        sleep infinity
+
+    networks:
+
+      player_net:
+        ipv4_address: 10.13.10.30
+
+      internal_net:
+        ipv4_address: 10.13.20.1
+
+
+  # ========================================================
+  # Simulates future PostgreSQL
+  #
+  # IMPORTANT:
+  # Connected ONLY to internal_net.
+  # ========================================================
+  phase4-database:
+    image: alpine:3.20
+    container_name: pp-phase4-database
+
+    command:
+      - sh
+      - -c
+      - |
+        echo "Phase 4 database simulator started"
+        sleep infinity
+
+    networks:
+
+      internal_net:
+        ipv4_address: 10.13.20.10
+
+
+  # ========================================================
+  # Simulates CTF control services
+  #
+  # Later this network will contain:
+  # CTFd
+  # MariaDB
+  # Redis
+  # Gitea
+  # Jenkins
+  # Nginx backend interface
+  # ========================================================
+  phase4-control:
+    image: alpine:3.20
+    container_name: pp-phase4-control
+
+    command:
+      - sh
+      - -c
+      - |
+        echo "Phase 4 control simulator started"
+        sleep infinity
+
+    networks:
+      - control_net

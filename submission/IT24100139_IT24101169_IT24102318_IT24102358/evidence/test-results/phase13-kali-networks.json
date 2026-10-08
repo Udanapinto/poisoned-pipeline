@@ -1,0 +1,31 @@
+{
+  "poisoned-pipeline_player_net": {
+    "IPAMConfig": {
+      "IPv4Address": "10.13.10.10"
+    },
+    "Links": null,
+    "Aliases": [
+      "pp-kali",
+      "kali",
+      "kali",
+      "kali-participant"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "44711a95070e1d12557f6a728c33d38b181aad3b5d37ba783dbfcbb8fb867f20",
+    "EndpointID": "c1c037b5d65395d584c03b920b70d4d665b9e9139a3525ea97ef45a18a8aebe0",
+    "Gateway": "10.13.10.1",
+    "IPAddress": "10.13.10.10",
+    "MacAddress": "96:28:f5:2c:1c:ba",
+    "IPPrefixLen": 24,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-kali",
+      "kali",
+      "kali-participant",
+      "b90c478a38dc"
+    ]
+  }
+}

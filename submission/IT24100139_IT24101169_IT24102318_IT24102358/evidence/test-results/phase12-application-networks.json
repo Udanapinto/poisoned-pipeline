@@ -1,0 +1,59 @@
+{
+  "poisoned-pipeline_internal_net": {
+    "IPAMConfig": {
+      "IPv4Address": "10.13.20.1"
+    },
+    "Links": null,
+    "Aliases": [
+      "pp-application",
+      "application",
+      "nexora-app-internal"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 1,
+    "NetworkID": "e817d571d6b8c90e2297bccac156e0c5063786f703d42fa881d1a6c6811b8510",
+    "EndpointID": "0f63ef30c48076b65d823fa6352c45c7619410c239f74d10335b692f4e2b86e7",
+    "Gateway": "",
+    "IPAddress": "10.13.20.1",
+    "MacAddress": "82:e9:52:61:8d:f2",
+    "IPPrefixLen": 24,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-application",
+      "application",
+      "nexora-app-internal",
+      "5b561c7fec0f",
+      "nexora-app"
+    ]
+  },
+  "poisoned-pipeline_player_net": {
+    "IPAMConfig": {
+      "IPv4Address": "10.13.10.30"
+    },
+    "Links": null,
+    "Aliases": [
+      "pp-application",
+      "application",
+      "nexora-app"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "44711a95070e1d12557f6a728c33d38b181aad3b5d37ba783dbfcbb8fb867f20",
+    "EndpointID": "20c8a3d903c5f7c61d3ac234f7329ff6bb78edb3e070b122d4350666aff6886f",
+    "Gateway": "10.13.10.1",
+    "IPAddress": "10.13.10.30",
+    "MacAddress": "76:36:e9:95:26:57",
+    "IPPrefixLen": 24,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-application",
+      "application",
+      "nexora-app",
+      "5b561c7fec0f"
+    ]
+  }
+}

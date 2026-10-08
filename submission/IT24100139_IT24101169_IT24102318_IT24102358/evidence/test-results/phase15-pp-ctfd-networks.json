@@ -1,0 +1,26 @@
+{
+  "poisoned-pipeline_control_net": {
+    "IPAMConfig": null,
+    "Links": null,
+    "Aliases": [
+      "pp-ctfd",
+      "ctfd"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "ef9f1ddbc6260eb36108c33bb7a0fea0b7e5ad37af38b71937ef7159e78f0510",
+    "EndpointID": "94256dc228d767546b8aa9325a753174db7d851e19ed22b22fe068f16a3459b2",
+    "Gateway": "",
+    "IPAddress": "172.19.0.6",
+    "MacAddress": "ba:73:90:d0:ab:8d",
+    "IPPrefixLen": 16,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-ctfd",
+      "ctfd",
+      "66c88e43ac1a"
+    ]
+  }
+}

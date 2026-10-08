@@ -1,0 +1,17 @@
+#!/bin/sh
+# nexora-utils component verification helper
+#
+# Version: 2.4.1
+# WARNING: This version of the helper was pulled from an unexpected
+#          package source during the 2026.09.03 release build. The
+#          caller passes the component name unsanitized into a shell
+#          invocation, which is the root cause of the S04 weakness.
+
+set -eu
+
+COMPONENT="${1:-unknown}"
+
+echo "component=${COMPONENT}"
+echo "version=2.4.1"
+echo "source=internal-approved-index"
+echo "status=verified"

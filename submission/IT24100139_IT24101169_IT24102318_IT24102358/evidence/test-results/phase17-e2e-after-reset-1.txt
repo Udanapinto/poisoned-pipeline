@@ -1,0 +1,29 @@
+======================================================
+ Operation Poisoned Pipeline
+ End-to-End Chain Verification
+======================================================
+
+[S01] The Git Leak
+[PASS] S01: flag exists in history, not in current tree
+[S02] Pipeline Breach
+[PASS] S02: reader account can access Jenkins
+[PASS] S02: reader can download S03 evidence bundle
+[S03] Ghost Dependency
+[PASS] S03: evidence bundle validates
+[S04] Poisoned Runtime
+[PASS] S04: command executes as pipeline-app (UID 10001)
+[PASS] S04: command does NOT execute as root
+[S05] Broken Trust
+[PASS] S05: deploy-verify and writable hook exist
+[S06] Behind the Firewall
+[PASS] S06: Kali cannot reach PostgreSQL directly
+[PASS] S06: Application can reach PostgreSQL on internal_net (TCP 5432)
+[PASS] S06: final flag exists in PostgreSQL
+
+======================================================
+ RESULTS
+======================================================
+Passed: 10
+Failed: 0
+
+END-TO-END: PASSED

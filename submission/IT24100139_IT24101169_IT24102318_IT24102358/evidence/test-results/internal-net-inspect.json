@@ -1,0 +1,61 @@
+[
+    {
+        "Name": "poisoned-pipeline_internal_net",
+        "Id": "5bfdbbe46fa7c0115623cb1894a7196058541b5539bfcc2c3bb2d794f0c8a598",
+        "Created": "2026-09-17T11:40:54.570886021+05:30",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "10.13.20.0/24",
+                    "Gateway": "10.13.20.254"
+                }
+            ]
+        },
+        "Internal": true,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {
+            "com.docker.compose.config-hash": "dba39fef6e6594d93d4ce584605599dd0f19576f5062b5415138d8256c757fbb",
+            "com.docker.compose.network": "internal_net",
+            "com.docker.compose.project": "poisoned-pipeline",
+            "com.docker.compose.version": "5.5.1"
+        },
+        "Containers": {
+            "2c3c33a48ed89fb2467abdf92016106e09df3522535d3ff85f0e98b7a8fac791": {
+                "Name": "pp-phase4-database",
+                "EndpointID": "4c183e0e5c7ea3facc1b514e22a261f4e83ec6d808994dfc156faa9934826f36",
+                "MacAddress": "f2:9e:4d:2e:74:32",
+                "IPv4Address": "10.13.20.10/24",
+                "IPv6Address": ""
+            },
+            "a78d20559a2353e23decde4e806275d47d0fa365e47316f3e31d18d71e4a42d3": {
+                "Name": "pp-phase4-application",
+                "EndpointID": "a1bf07a324b0c182a3c72bd33d6c61e5dfa09454a51e4db7c4ffd14039fe68c7",
+                "MacAddress": "be:f6:fe:1f:88:8f",
+                "IPv4Address": "10.13.20.1/24",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "10.13.20.0/24": {
+                        "IPsInUse": 5,
+                        "DynamicIPsAvailable": 251
+                    }
+                }
+            }
+        }
+    }
+]

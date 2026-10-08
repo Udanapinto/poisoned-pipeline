@@ -1,0 +1,718 @@
+name: poisoned-pipeline
+
+
+# ==========================================================
+# SERVICES
+# ==========================================================
+
+services:
+
+  # ========================================================
+  # MariaDB
+  #
+  # Persistent database used by CTFd.
+  #
+  # IMPORTANT:
+  # - control_net only
+  # - NO host-published port
+  # ========================================================
+
+  mariadb:
+
+    image: mariadb:11.4.13
+
+    container_name: pp-mariadb
+
+    restart: unless-stopped
+
+    environment:
+
+      MARIADB_DATABASE: ${CTFD_DB_NAME}
+
+      MARIADB_USER: ${CTFD_DB_USER}
+
+      MARIADB_PASSWORD: ${CTFD_DB_PASSWORD}
+
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+
+    command:
+
+      - --character-set-server=utf8mb4
+
+      - --collation-server=utf8mb4_unicode_ci
+
+    volumes:
+
+      - mariadb_data:/var/lib/mysql
+
+    networks:
+
+      - control_net
+
+    healthcheck:
+
+      test:
+        [
+          "CMD-SHELL",
+          "mariadb-admin ping -h 127.0.0.1 -uroot -p\"$${MARIADB_ROOT_PASSWORD}\" --silent"
+        ]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 10
+
+      start_period: 20s
+
+
+  # ========================================================
+  # Redis
+  #
+  # Cache/session support for CTFd.
+  #
+  # IMPORTANT:
+  # - control_net only
+  # - NO host-published port
+  # ========================================================
+
+  redis:
+
+    image: redis:7.4.0-alpine
+
+    container_name: pp-redis
+
+    restart: unless-stopped
+
+    command:
+
+      - redis-server
+
+      - --appendonly
+
+      - "yes"
+
+      - --save
+
+      - "60"
+
+      - "1"
+
+    volumes:
+
+      - redis_data:/data
+
+    networks:
+
+      - control_net
+
+    healthcheck:
+
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "ping"
+        ]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 10
+
+
+  # ========================================================
+  # CTFd
+  #
+  # CTF control platform.
+  #
+  # IMPORTANT:
+  # - control_net only
+  # - TCP 8000 is NOT published to Ubuntu
+  # - participants reach it through Nginx
+  # ========================================================
+
+  ctfd:
+
+    image: ctfd/ctfd:3.8.7
+
+    container_name: pp-ctfd
+
+    restart: unless-stopped
+
+    depends_on:
+
+      mariadb:
+
+        condition: service_healthy
+
+      redis:
+
+        condition: service_healthy
+
+    environment:
+
+      SECRET_KEY: ${CTFD_SECRET_KEY}
+
+      UPLOAD_FOLDER: /var/uploads
+
+      LOG_FOLDER: /var/log/CTFd
+
+      DATABASE_URL: >-
+        mysql+pymysql://${CTFD_DB_USER}:${CTFD_DB_PASSWORD}@mariadb/${CTFD_DB_NAME}
+
+      REDIS_URL: redis://redis:6379
+
+      WORKERS: "2"
+
+    volumes:
+
+      - ctfd_uploads:/var/uploads
+
+      - ctfd_logs:/var/log/CTFd
+
+    expose:
+
+      - "8000"
+
+    networks:
+
+      - control_net
+
+    healthcheck:
+
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)\" >/dev/null 2>&1"
+        ]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 12
+
+      start_period: 30s
+
+
+  # ========================================================
+  # Gitea
+  #
+  # S01 - The Git Leak
+  #
+  # IMPORTANT:
+  # - control_net only
+  # - NO host-published TCP 3000
+  # - participant access only through Nginx
+  # - SQLite is sufficient for this controlled CTF service
+  # ========================================================
+
+  gitea:
+
+    image: ${GITEA_IMAGE}
+
+    container_name: pp-gitea
+
+    restart: unless-stopped
+
+    environment:
+
+      GITEA__database__DB_TYPE: sqlite3
+
+      GITEA__database__PATH: /data/gitea/gitea.db
+
+      GITEA__server__HTTP_PORT: "3000"
+
+      GITEA__server__DOMAIN: 10.13.10.20
+
+      GITEA__server__ROOT_URL: https://10.13.10.20/git/
+
+      GITEA__server__DISABLE_SSH: "true"
+
+      GITEA__server__OFFLINE_MODE: "true"
+
+      GITEA__service__DISABLE_REGISTRATION: "true"
+
+      GITEA__security__INSTALL_LOCK: "true"
+
+    volumes:
+
+      - gitea_data:/data
+
+    expose:
+
+      - "3000"
+
+    networks:
+
+      - control_net
+
+
+  # ========================================================
+  # Jenkins
+  #
+  # S02 - Pipeline Breach
+  #
+  # IMPORTANT:
+  # - control_net only
+  # - NO host-published TCP 8080
+  # - NO Docker socket
+  # - participant access only through Nginx
+  # ========================================================
+
+  jenkins:
+
+    build:
+
+      context: ./jenkins
+
+      args:
+
+        JENKINS_BASE_IMAGE: ${JENKINS_BASE_IMAGE:-jenkins/jenkins:lts-jdk21}
+
+    image: ${JENKINS_LOCAL_IMAGE:-poisoned-pipeline/jenkins:phase7}
+
+    container_name: pp-jenkins
+
+    restart: unless-stopped
+
+    env_file:
+
+      # S01 provides the pipeline-reader credential
+      - ./private/s01/s01.env
+
+      # S02 provides the Jenkins admin account and S02 flag
+      - ./private/s02/s02.env
+
+    environment:
+
+      # Jenkins Configuration as Code
+      CASC_JENKINS_CONFIG: /var/jenkins_home/casc/jenkins.yaml
+
+      # Disable initial setup wizard.
+      # Enable separate archived-artifact permission.
+      JAVA_OPTS: >-
+        -Djenkins.install.runSetupWizard=false
+        -Dhudson.security.ArtifactsPermission=true
+
+      # Jenkins is reverse proxied under:
+      #
+      # https://10.13.10.20/jenkins/
+      JENKINS_OPTS: "--prefix=/jenkins"
+
+    volumes:
+
+      # Persistent Jenkins data
+      - jenkins_data:/var/jenkins_home
+
+      # Configuration as Code is read-only
+      - ./jenkins/casc:/var/jenkins_home/casc:ro
+
+      # Phase 8 — public-safe static forensic evidence
+      - ./challenges/s03-ghost-dependency/dist:/opt/poisoned-pipeline/s03/dist:ro
+      - ./challenges/s03-ghost-dependency/keys:/opt/poisoned-pipeline/s03/keys:ro
+
+    expose:
+
+      # Internal Docker-network exposure ONLY.
+      # This does NOT publish TCP 8080 to Ubuntu.
+      - "8080"
+
+    networks:
+
+      - control_net
+
+    security_opt:
+
+      - no-new-privileges:true
+
+    cap_drop:
+
+      - ALL
+
+    healthcheck:
+
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://127.0.0.1:8080/jenkins/login >/dev/null || exit 1"
+        ]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 30
+
+      start_period: 30s
+
+
+  # ========================================================
+  # Application Challenge
+  #
+  # Foundation for:
+  # S04 - Poisoned Runtime
+  # S05 - Broken Trust
+  # S06 - Behind the Firewall
+  #
+  # Phase 12 state:
+  # - Flask service running as pipeline-app (UID 10001)
+  # - S04 vulnerable diagnostics endpoint enabled
+  # - S05 deploy-verify + sudoers + writable hook
+  # - S06 sshd pivot endpoint (tunnel-only pivot user)
+  #
+  # Networking:
+  # - player_net:   10.13.10.30  (participant-facing)
+  # - internal_net: 10.13.20.1   (controlled pivot)
+  #
+  # gw_priority: 1 on internal_net makes the default route
+  # point to the isolated network, not player_net.
+  # ========================================================
+
+  application:
+
+    build:
+
+      context: ./application
+
+      args:
+
+        PYTHON_BASE_IMAGE: ${APPLICATION_BASE_IMAGE}
+
+    image: ${APPLICATION_IMAGE}
+
+    container_name: pp-application
+
+    hostname: nexora-app
+
+    restart: unless-stopped
+
+    environment:
+
+      NEXORA_APP_VERSION: ${NEXORA_APP_VERSION}
+
+    expose:
+
+      - "5000"
+
+    networks:
+    
+      player_net:
+    
+        ipv4_address: 10.13.10.30
+    
+        aliases:
+    
+          - nexora-app
+    
+        gw_priority: 0
+    
+      internal_net:
+    
+        ipv4_address: 10.13.20.1
+    
+        aliases:
+    
+          - nexora-app-internal
+    
+        gw_priority: 1
+    
+    healthcheck:
+    
+      test:
+    
+        - "CMD-SHELL"
+    
+        - "curl -fsS http://127.0.0.1:5000/healthz >/dev/null || exit 1"
+    
+      interval: 10s
+    
+      timeout: 5s
+    
+      retries: 12
+    
+      start_period: 10s 
+
+
+  # ============================================================
+  # PostgreSQL 16
+  # S06 - Behind the Firewall
+  #
+  # IMPORTANT:
+  #   - internal_net ONLY
+  #   - NO host-published TCP 5432
+  #   - NO player_net membership
+  #   - NO control_net membership
+  # ============================================================
+
+  postgres:
+
+    image: ${POSTGRES_IMAGE}
+
+    container_name: pp-postgres
+
+    hostname: postgres
+
+    restart: unless-stopped
+
+    environment:
+
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      POSTGRES_USER: postgres
+
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    volumes:
+
+      - postgres_data:/var/lib/postgresql/data
+
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+
+    networks:
+
+      internal_net:
+
+        ipv4_address: 10.13.20.10
+
+        aliases:
+
+          - postgres
+
+          - nexora-db
+
+    expose:
+
+      - "5432"
+
+    healthcheck:
+
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB}"]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 12
+
+      start_period: 15s
+
+    security_opt:
+
+      - no-new-privileges:true
+
+
+  # ========================================================
+  # Nginx
+  #
+  # Participant-facing gateway.
+  #
+  # Networks:
+  #
+  # player_net:
+  #     10.13.10.20
+  #
+  # control_net:
+  #     reverse proxy access to:
+  #       - CTFd
+  #       - Gitea
+  #       - Jenkins
+  #
+  # ONLY TCP 443 is published to Ubuntu.
+  # ========================================================
+
+  nginx:
+
+    image: nginx:1.28.0-alpine
+
+    container_name: pp-nginx
+
+    restart: unless-stopped
+
+    depends_on:
+
+      ctfd:
+
+        condition: service_healthy
+
+      gitea:
+
+        condition: service_started
+
+      jenkins:
+
+        condition: service_healthy
+
+    ports:
+
+      # ONLY participant-facing host-published service
+      - "443:443"
+
+    volumes:
+
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+      - ./nginx/certs:/etc/nginx/certs:ro
+
+    networks:
+
+      player_net:
+
+        ipv4_address: 10.13.10.20
+
+      control_net:
+
+  # ======================================================
+  # Kali Participant Environment
+  #
+  # IMPORTANT:
+  # - player_net ONLY
+  # - NO control_net
+  # - NO internal_net
+  # - NO host-published ports
+  # - NO Docker socket
+  # ======================================================
+  kali:
+    build:
+      context: ./kali
+      args:
+        KALI_BASE_IMAGE: ${KALI_BASE_IMAGE}
+    image: ${KALI_IMAGE}
+    container_name: pp-kali
+    hostname: kali-participant
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/opt/kali/entrypoint.sh"]
+    volumes:
+      - ./kali/scripts/entrypoint.sh:/opt/kali/entrypoint.sh:ro
+      - ./challenges:/challenges:ro
+    networks:
+      player_net:
+        ipv4_address: 10.13.10.10
+        aliases:
+          - kali
+          - kali-participant
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_RAW
+      - NET_BIND_SERVICE
+
+# ==========================================================
+# PERSISTENT VOLUMES
+# ==========================================================
+
+volumes:
+
+  mariadb_data:
+
+  redis_data:
+
+  ctfd_uploads:
+
+  ctfd_logs:
+
+  gitea_data:
+
+  jenkins_data:
+
+  postgres_data:
+
+  kali_data:
+
+
+# ==========================================================
+# NETWORKS
+# ==========================================================
+
+networks:
+
+  # ========================================================
+  # Participant-facing network
+  #
+  # Current participant-facing gateway:
+  #
+  # Nginx = 10.13.10.20
+  #
+  # Future:
+  # Kali        = 10.13.10.10
+  # Application = 10.13.10.30
+  # ========================================================
+
+  player_net:
+
+    name: poisoned-pipeline_player_net
+
+    driver: bridge
+
+    ipam:
+
+      driver: default
+
+      config:
+
+        - subnet: 10.13.10.0/24
+
+          gateway: 10.13.10.1
+
+
+  # ========================================================
+  # CTF control network
+  #
+  # Current members:
+  #
+  # - MariaDB
+  # - Redis
+  # - CTFd
+  # - Gitea
+  # - Jenkins
+  # - Nginx backend interface
+  #
+  # IMPORTANT:
+  # - internal Docker network
+  # - backend services are not host-published
+  # ========================================================
+
+  control_net:
+
+    name: poisoned-pipeline_control_net
+
+    driver: bridge
+
+    internal: true
+
+
+  # ========================================================
+  # Protected challenge network
+  #
+  # Current members:
+  #
+  # - Application Challenge = 10.13.20.1
+  # - PostgreSQL 16         = 10.13.20.10
+  #
+  # Gateway uses .254 because .1 is reserved for the
+  # Application Challenge.
+  # ========================================================
+
+  internal_net:
+
+    name: poisoned-pipeline_internal_net
+
+    driver: bridge
+
+    internal: true
+
+    ipam:
+
+      driver: default
+
+      config:
+
+        - subnet: 10.13.20.0/24
+
+          gateway: 10.13.20.254

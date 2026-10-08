@@ -1,0 +1,28 @@
+======================================================
+ Operation Poisoned Pipeline
+ Phase 14 - CTFd Integration Verification
+======================================================
+
+[PASS] CTFd is reachable through Nginx (200)
+[PASS] CTFd container is healthy
+[PASS] pp-mariadb is on control_net only
+[PASS] pp-redis is on control_net only
+[PASS] Nginx spans player_net and control_net
+[PASS] pp-mariadb has no host-published ports
+[PASS] pp-redis has no host-published ports
+[PASS] pp-ctfd has no host-published ports
+[PASS] pp-gitea has no host-published ports
+[PASS] pp-jenkins has no host-published ports
+[PASS] pp-postgres has no host-published ports
+[PASS] Nginx publishes TCP 443
+[PASS] Nginx does not publish backend ports
+[PASS] CTFd can reach MariaDB and Redis
+[PASS] CTFd external egress is blocked
+
+======================================================
+ RESULTS
+======================================================
+Passed: 15
+Failed: 0
+
+PHASE 14 CTFD: PASSED

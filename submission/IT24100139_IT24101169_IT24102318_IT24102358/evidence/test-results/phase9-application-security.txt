@@ -1,0 +1,4 @@
+Privileged=false
+PidMode=
+NetworkMode=poisoned-pipeline_internal_net
+Mounts=[]

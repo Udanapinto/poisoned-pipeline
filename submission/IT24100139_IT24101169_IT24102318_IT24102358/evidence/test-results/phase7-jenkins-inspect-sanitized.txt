@@ -1,0 +1,14 @@
+]633;E;echo "Container:";a2f7ca4e-96bd-4149-9d54-1b671afd9f9a]633;CContainer:
+Name=/pp-jenkins Image=poisoned-pipeline/jenkins:phase7 Status=running
+
+Health:
+healthy
+
+Networks:
+poisoned-pipeline_control_net 172.19.0.6
+
+
+Published ports:
+
+Docker socket:
+PASS: Docker socket not mounted

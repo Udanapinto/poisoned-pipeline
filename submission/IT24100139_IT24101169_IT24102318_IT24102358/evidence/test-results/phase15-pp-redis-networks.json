@@ -1,0 +1,26 @@
+{
+  "poisoned-pipeline_control_net": {
+    "IPAMConfig": null,
+    "Links": null,
+    "Aliases": [
+      "pp-redis",
+      "redis"
+    ],
+    "DriverOpts": null,
+    "GwPriority": 0,
+    "NetworkID": "ef9f1ddbc6260eb36108c33bb7a0fea0b7e5ad37af38b71937ef7159e78f0510",
+    "EndpointID": "2c2bbec28870ab5704f8bae741197e6b94510f244c260377f7e2e5875069f3f8",
+    "Gateway": "",
+    "IPAddress": "172.19.0.2",
+    "MacAddress": "5e:b7:c2:7d:9b:ed",
+    "IPPrefixLen": 16,
+    "IPv6Gateway": "",
+    "GlobalIPv6Address": "",
+    "GlobalIPv6PrefixLen": 0,
+    "DNSNames": [
+      "pp-redis",
+      "redis",
+      "ef53e5745a72"
+    ]
+  }
+}

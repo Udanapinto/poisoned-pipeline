@@ -1,0 +1,26 @@
+======================================================
+ Operation Poisoned Pipeline
+ Bypass Testing
+======================================================
+
+[PASS] S01: flag not in current tree
+[PASS] S01: Jenkins credential not in current tree
+[PASS] S02: anonymous artifact access denied (403)
+[PASS] S02: reader cannot trigger builds (403)
+[PASS] S03: no literal flag in evidence bundle
+[PASS] S04: pipeline-app cannot read /etc/shadow
+[PASS] S05: pipeline-app cannot read S05 flag pre-escalation
+[PASS] S05: pipeline-app cannot read S06 pivot pre-escalation
+[PASS] S05: direct sudo to /bin/bash denied
+[PASS] S05: direct sudo to /bin/sh denied
+[PASS] S05: direct sudo to python denied
+[PASS] S06: Kali cannot reach PostgreSQL directly
+[PASS] S06: ctf_reader cannot INSERT
+
+======================================================
+ RESULTS
+======================================================
+Passed: 13
+Failed: 0
+
+BYPASS TESTING: PASSED

@@ -1,0 +1,60 @@
+# Real secrets
+.env
+.env.*
+!.env.example
+
+flags.env
+*.secret
+*.secrets
+
+# Private implementation data
+private/*
+!private/build-manifest.example.yml
+
+# Certificates/private keys
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# VS Code local config
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Nginx TLS private material
+nginx/certs/*
+!nginx/certs/.gitkeep
+
+*.key
+*.pem
+
+# VS Code
+.vscode/
+
+
+# Phase 8 temporary forensic build area
+challenges/s03-ghost-dependency/work/
+
+# Phase 10 - staged S04 private material
+application/.s04-private/
+
+# Phase 11 - staged S05 private material
+application/.s05-private/
+
+# Phase 12 - staged S06 private material
+application/.s06-private/

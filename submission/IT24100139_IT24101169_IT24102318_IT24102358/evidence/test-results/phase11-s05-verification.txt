@@ -1,0 +1,46 @@
+==============================================
+ Operation Poisoned Pipeline
+ Phase 11 - S05 Broken Trust Verification
+==============================================
+
+[PASS] Application container exists
+[PASS] Application container is running
+[PASS] Application healthcheck is healthy
+[PASS] pipeline-app may sudo /usr/local/bin/deploy-verify
+[PASS] pipeline-app may not sudo /bin/bash
+[PASS] pipeline-app may not sudo /bin/sh
+[PASS] pipeline-app may not sudo python
+[PASS] pipeline-app may not sudo find
+[PASS] pipeline-app cannot directly sudo /bin/bash
+[PASS] deploy-verify is installed and executable
+[PASS] deploy-verify is root:root 0755
+[PASS] verify.sh is root:pipeline-app 0775
+[PASS] pipeline-app can write to verify.sh
+[PASS] deployment.conf references the trusted hook
+[PASS] Escalation yields UID 0 inside the container
+[PASS] Escalation does not stay as pipeline-app
+[PASS] Escalation recovers the expected S05 flag
+[PASS] Escalation recovers the S06 pivot credential
+[PASS] pipeline-app cannot read /root/s05_flag.txt before escalation
+[PASS] pipeline-app cannot read /root/s06_pivot.txt before escalation
+[PASS] s05_flag.txt is root:root 0600
+[PASS] s06_pivot.txt is root:root 0600
+[PASS] S04 diagnostics endpoint is still functional
+[PASS] Container is not privileged
+[PASS] Host PID namespace is not used
+[PASS] Host network mode is not used
+[PASS] Docker socket is absent
+[PASS] Application has no host mounts
+[PASS] Flask PID 1 has no effective Linux capabilities
+[PASS] SSH is not listening in Phase 11
+[PASS] player_net address is 10.13.10.30
+[PASS] internal_net address is 10.13.20.1
+[PASS] Application has no host-published ports
+
+==============================================
+ RESULTS
+==============================================
+Passed: 33
+Failed: 0
+
+PHASE 11 S05: PASSED
