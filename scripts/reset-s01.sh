@@ -58,15 +58,28 @@ echo "[+] Recreating Gitea..."
 docker compose up -d gitea
 
 
-echo "[+] Waiting for Gitea startup..."
+# --------------------------------------------------
+# Wait for Gitea HTTP API to be reachable through
+# Nginx. The container itself starts within a few
+# seconds, but the HTTP server needs more time.
+# --------------------------------------------------
 
+echo "[+] Waiting for Gitea HTTP API to become ready..."
 
-for attempt in $(seq 1 30); do
+for attempt in $(seq 1 60); do
 
-    if docker compose logs gitea 2>&1 \
-        | grep -qi "Listen"
-    then
+    CODE="$(curl -k -s -o /dev/null -w '%{http_code}' \
+        "https://10.13.10.20/git/api/v1/version" 2>/dev/null || true)"
+
+    if [[ "${CODE}" == "200" ]]; then
+        echo "    Gitea is ready (HTTP ${CODE})."
         break
+    fi
+
+    if [[ "${attempt}" -eq 60 ]]; then
+        echo "[ERROR] Gitea did not become ready in time."
+        docker compose logs --tail=50 gitea
+        exit 1
     fi
 
     sleep 2
@@ -78,12 +91,32 @@ done
 # Nginx must refresh Docker DNS for recreated Gitea
 # --------------------------------------------------
 
-echo "[+] Restarting Nginx..."
+echo "[+] Restarting Nginx to refresh backend DNS..."
 
 docker compose restart nginx >/dev/null
 
 
-sleep 5
+# Wait for nginx to serve Gitea
+
+for attempt in $(seq 1 30); do
+
+    CODE="$(curl -k -s -o /dev/null -w '%{http_code}' \
+        "https://10.13.10.20/git/" 2>/dev/null || true)"
+
+    if [[ "${CODE}" =~ ^(200|301|302|401)$ ]]; then
+        echo "    Nginx is proxying Gitea (HTTP ${CODE})."
+        break
+    fi
+
+    if [[ "${attempt}" -eq 30 ]]; then
+        echo "[ERROR] Nginx is not proxying Gitea in time."
+        docker compose logs --tail=50 nginx
+        exit 1
+    fi
+
+    sleep 2
+
+done
 
 
 # --------------------------------------------------
@@ -108,7 +141,8 @@ docker compose exec -T \
   --password "$GITEA_ADMIN_PASSWORD" \
   --email "$GITEA_ADMIN_EMAIL" \
   --admin \
-  --must-change-password=false
+  --must-change-password=false \
+  || echo "    (admin user may already exist, continuing)"
 
 
 # --------------------------------------------------

