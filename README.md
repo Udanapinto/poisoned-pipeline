@@ -185,3 +185,5 @@ Our test results and screenshots are organized under `evidence/test-results/`, `
 - **Gitea/Jenkins returns 502:** check their containers and restart Nginx with `docker compose restart nginx` if the backend was recreated.
 
 This project is an **intentionally vulnerable training environment**. We run it only on our isolated lab machine and do not expose the challenge services to the public internet.
+
+
