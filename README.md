@@ -50,6 +50,8 @@ Three isolated Docker networks enforce the security boundaries:
 
 ### 1. Clone the repository
 
+
+
 ```bash
 git clone <repository-url>
 cd poisoned-pipeline
