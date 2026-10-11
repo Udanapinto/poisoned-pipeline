@@ -1,31 +1,76 @@
 # Operation Poisoned Pipeline
 
-This is our **IE3132 Penetration Testing** group project. We built a Docker-based CTF environment where players investigate a software supply-chain attack across six connected challenges. Each stage gives a clue or access needed for the next one.
+**IE3132 – Penetration Testing | Assignment 02 | Group 40**  
+**Project type:** Docker-based Capture the Flag (CTF) Play Box  
+**Repository:** To be added before final submission
 
-**Repository:** https://github.com/Udanapinto/poisoned-pipeline
+## 1. About our project
 
-| Stage | Challenge | Points |
-|---|---|---:|
-| S01 | The Git Leak | 100 |
-| S02 | Pipeline Breach | 100 |
-| S03 | The Ghost Dependency | 150 |
-| S04 | Poisoned Runtime | 200 |
-| S05 | Broken Trust | 200 |
-| S06 | Behind the Firewall | 250 |
-| **Total** | | **1,000** |
+For our Assignment 02, we developed **Operation Poisoned Pipeline**, a six-stage CTF that follows a simulated software supply-chain compromise at a fictional company called Nexora Technologies. Instead of keeping the challenges completely separate, we connected them so that information or access obtained in one stage helps the participant move to the next stage.
 
-## 1. Before starting
+We used Docker Compose to run the platform, challenge services and a Kali Linux participant environment on an isolated lab network. This README explains how to prepare, deploy, test and reset the box using the project files included in our submission.
 
-We developed the project for **Ubuntu 24.04 LTS**, with Docker Engine, Docker Compose v2, Git and Python 3. The stack uses Nginx, CTFd, MariaDB, Redis, Gitea, Jenkins, Flask, PostgreSQL 16 and a Kali participant container.
+### Group members
 
-Install the basic tools:
+| Student ID | Name |
+|---|---|
+| IT24100139 | Pinthu D.I.U. |
+| IT24101169 | Weligampitiya S.A.S.D. |
+| IT24102318 | Wickrama Edirisooriya A.A.G. |
+| IT24102358 | Silva D.P.L.T.D. |
+
+## 2. Challenge pathway
+
+| Stage | Challenge | Main area | Difficulty | Points |
+|---|---|---|---|---:|
+| S01 | The Git Leak | OSINT and Git reconnaissance | Easy | 100 |
+| S02 | Pipeline Breach | Web security and CI/CD investigation | Easy | 100 |
+| S03 | The Ghost Dependency | Software supply-chain forensics | Moderate | 150 |
+| S04 | Poisoned Runtime | Application command execution | Moderate | 200 |
+| S05 | Broken Trust | Linux privilege escalation | Moderate–Hard | 200 |
+| S06 | Behind the Firewall | Network pivoting and database access | Hard | 250 |
+| | **Total** | | | **1,000** |
+
+Our intended path is **Git history → Jenkins build evidence → dependency investigation → vulnerable application → local privilege escalation → internal PostgreSQL database**. S06 is the final challenge. The detailed participant instructions are provided in the relevant `challenges/s0*/` folders, and the CTFd setup reference is in `scripts/ctfd-export-challenges.sh`.
+
+The flag format is `IE3132{PP_S0X_<32-hex-token>}`. Each stage uses its own generated flag or derived answer. We use CTFd to validate submissions and manage challenge points and hints.
+
+## 3. Technologies and architecture
+
+Our project uses **Ubuntu 24.04 LTS**, Docker Engine and Docker Compose v2. The main services are:
+
+- **Nginx** – HTTPS reverse proxy and entry point.
+- **CTFd, MariaDB and Redis** – challenge platform, database and supporting cache.
+- **Gitea** – seeded Git repository for S01.
+- **Jenkins** – historical pipeline and artifacts for S02 and S03.
+- **Custom Python/Flask application** – application challenge used by S04–S06.
+- **PostgreSQL 16** – protected database containing the final S06 record.
+- **Kali Linux container** – participant environment and testing tools.
+
+We separated the services into three Docker networks:
+
+| Network | Subnet | Purpose |
+|---|---|---|
+| `player_net` | `10.13.10.0/24` | Participant-facing services and Kali |
+| `control_net` | Docker-managed internal network | CTFd, MariaDB, Redis, Gitea and Jenkins |
+| `internal_net` | `10.13.20.0/24` | Protected application-to-database path |
+
+Only **TCP 443** is published to the Ubuntu host by Nginx in `compose.yml`. CTFd, Gitea, Jenkins and PostgreSQL do not publish their application ports directly to the host. Kali is attached to `player_net`, whereas PostgreSQL is attached only to `internal_net`. For the last challenge, participants must use the intended application/SSH pivot rather than connecting directly to the database.
+
+## 4. Requirements before installation
+
+We recommend an Ubuntu 24.04 LTS lab machine or VM with enough RAM and disk space for Docker images and Jenkins. A stable internet connection is needed for the initial image downloads.
+
+Required tools: Docker Engine, the Docker Compose plugin, Git, Python 3, Bash, OpenSSL, curl, jq and unzip. Install the basic Ubuntu packages with:
 
 ```bash
 sudo apt update
 sudo apt install -y git curl jq unzip openssl python3 python3-venv
 ```
 
-Install Docker Engine and the Compose plugin using the [official Ubuntu instructions](https://docs.docker.com/engine/install/ubuntu/) if they are not already installed. Check the installation:
+Install Docker Engine and the Compose plugin using Docker's official Ubuntu installation instructions: <https://docs.docker.com/engine/install/ubuntu/>.
+
+Check that Docker works:
 
 ```bash
 docker --version
@@ -33,20 +78,48 @@ docker compose version
 docker run --rm hello-world
 ```
 
-If Docker reports a permission error, add your account to the Docker group with `sudo usermod -aG docker "$USER"`, then log out and log back in. Docker group access gives elevated control over the host, so use it only on a trusted development machine.
+If Docker gives a socket permission error, use `sudo` for Docker commands or configure the Docker group on your trusted lab VM. Docker group membership grants powerful access to the host.
 
-## 2. Get the project files
+## 5. Open the submitted project
+
+Extract the submitted ZIP and open a terminal **inside the folder containing `compose.yml`**. For example, if the extracted folder is named `poisoned-pipeline`:
 
 ```bash
-git clone https://github.com/Udanapinto/poisoned-pipeline.git
 cd poisoned-pipeline
+ls compose.yml .env.example scripts/
 ```
 
-Run the remaining commands **from this project folder**. VS Code can be opened with `code .` if installed.
+For a fresh build, also confirm that the submitted package includes `scripts/generate-tls-cert.sh` and `challenges/s01-git-leak/seed/create-s01-bundle.sh`. These two files are used by the setup sequence below.
 
-## 3. Prepare the environment and challenge data
+All commands in the next sections are run from this folder. The submitted files can be used directly; cloning GitHub is not required. We will add our repository link separately.
 
-First, create the local environment file:
+### Main folders
+
+```text
+poisoned-pipeline/
+├── application/        # Flask application, container build and challenge logic
+├── challenges/         # S01–S06 challenge files, briefs, PoCs and solvers
+├── ctfd/               # CTF platform-related project files
+├── evidence/           # Test logs, screenshots and verification results
+├── gitea/              # Git challenge material and public signing key
+├── jenkins/            # Dockerfile, configuration and release job
+├── kali/               # Participant container
+├── nginx/              # HTTPS reverse proxy configuration
+├── postgres/           # Database initialization
+├── scripts/            # Secret generation, seeding, build and reset scripts
+├── tests/              # Automated verification checks
+├── .env.example        # Environment configuration template
+├── compose.yml         # Docker Compose services and networks
+└── README.md
+```
+
+Some copies of our development package also include an existing `.env`, `private/` directory, `golden-seed.tar.gz` and test backups. These are lab-generated data used for demonstration or recovery. **If they are included, keep the matching files together**. Regenerating only part of an existing setup can make the flags, signing keys or restored database state inconsistent.
+
+## 6. Prepare a fresh installation
+
+This section is for a fresh deployment **without an already configured lab state**. If you are restoring a matching existing baseline, read Section 10 first.
+
+### Step 1 – Set the environment values
 
 ```bash
 cp .env.example .env
@@ -54,9 +127,17 @@ chmod 600 .env
 nano .env
 ```
 
-Replace the `CHANGE_ME` values with separate strong values. For the CTFd database password, MariaDB root password and CTFd secret key, I used random hex values (generate each one using `openssl rand -hex 24`). The stage flags and Jenkins credentials are generated separately by the scripts below. The S06 generator also adds the required `POSTGRES_ADMIN_PASSWORD` to `.env`.
+Update the placeholder values, especially `CTFD_DB_PASSWORD`, `MARIADB_ROOT_PASSWORD`, `POSTGRES_PASSWORD` and `CTFD_SECRET_KEY`. We generate individual random values with:
 
-Generate the TLS certificate, challenge secrets, Git history and S03 evidence **in this order**:
+```bash
+openssl rand -hex 24
+```
+
+Use a separate value for each required setting. The S06 generation script also sets up the PostgreSQL administrator value used by the Compose configuration. Do not copy test credentials from another unrelated project.
+
+### Step 2 – Generate challenge material
+
+Run these scripts in the order shown:
 
 ```bash
 bash scripts/generate-tls-cert.sh
@@ -70,11 +151,13 @@ bash scripts/generate-s05-secrets.sh
 bash scripts/generate-s06-secrets.sh
 ```
 
-These scripts create files under `private/` and prepare the signed S01/S03 material. **Keep `.env`, `private/`, certificates' private keys and generated flags out of GitHub.** The TLS certificate is self-signed because this is a local lab.
+These scripts prepare the local TLS certificate, S01 Git history and signing material, S03 forensic evidence, stage credentials and final database configuration. Most generated stage settings are stored under `private/s01/` through `private/s06/`. This is a controlled CTF, so these credentials are synthetic lab values, not real organization accounts.
 
-## 4. Build and start the containers
+The Nginx certificate is self-signed. A browser certificate warning is expected when accessing this local lab.
 
-The application image must be built through its own script because S04–S06 use private build-time files. After that, build Jenkins and Kali, then start the complete stack:
+### Step 3 – Build the images and start the services
+
+The application must be built using its provided script because it stages private build-time challenge files:
 
 ```bash
 docker compose config -q
@@ -84,18 +167,19 @@ docker compose up -d --no-build
 docker compose ps
 ```
 
-Check that the services are running. Jenkins and CTFd can take longer than the other containers to become healthy. If a service has a problem, view its logs with:
+The first build may take some time while Docker downloads images and Jenkins dependencies. Wait for services with health checks to become healthy. If one is not starting, inspect its logs:
 
 ```bash
 docker compose logs --tail=80 ctfd
 docker compose logs --tail=80 jenkins
+docker compose logs --tail=80 application
 ```
 
-For this repository, avoid rebuilding the application with a general `docker compose up -d --build` after the private staging files have been cleaned up; use `scripts/build-application.sh` when its image needs to be rebuilt.
+For later application rebuilds, use `bash scripts/build-application.sh` so its private build inputs are prepared correctly.
 
-## 5. Seed the challenge services
+### Step 4 – Seed the challenge services
 
-For a **fresh lab installation**, create the Gitea challenge repository, Jenkins historical builds and S06 database records:
+After the containers start, initialize the Git challenge, Jenkins historical release data and the final PostgreSQL record:
 
 ```bash
 bash scripts/reset-s01.sh
@@ -103,87 +187,143 @@ bash scripts/seed-jenkins-s02.sh
 bash scripts/seed-postgres-s06.sh
 ```
 
-The first script recreates the S01 Gitea challenge data, so it should not be used to preserve an existing Gitea setup. The second script loads the Jenkins release job and its historical artifacts; the third adds the final database record and read-only credentials.
+`reset-s01.sh` recreates the Gitea challenge state, so it is appropriate for initial setup or an intentional reset, not for preserving an existing Git service. The Jenkins and database seed scripts populate the challenge records required for the intended path.
 
-## 6. Complete CTFd setup
+### Step 5 – Configure CTFd
 
-Open **https://10.13.10.20/** in Ubuntu's browser (or `https://localhost/` through the published Nginx port). Accept the self-signed certificate warning for this lab only.
+Open **<https://localhost/>** in the browser on the Ubuntu host. The lab gateway can also be reached at **<https://10.13.10.20/>** where Docker bridge routing allows it. If Ubuntu is running in a VM, open the URL inside that VM unless you have configured additional host-to-VM networking.
 
-On the first visit, complete the CTFd setup page and create the administrator account. Then sign in and add the six challenges from the table above. To see the configured categories, descriptions of the flag formats, scores and three hints per challenge, run:
+On a fresh CTFd installation, complete the first-run setup and create the administrator account. Then open the CTFd administration area and manually add the six challenges. We use this script as our configuration reference:
 
 ```bash
 bash scripts/ctfd-export-challenges.sh
 ```
 
-Add the **real generated flags**, not the example flag formats. They are kept in `private/s01/s01.env`, `private/s02/s02.env`, `private/s03/answer-manifest.env`, and `private/s04/`, `private/s05/`, `private/s06/` respectively. S03 uses a derived flag. The supplied CTFd API helper is not a complete importer, so we add the challenges through the administrator interface.
+It prints the **challenge titles, categories, points, flag formats and three hints per stage**. Add the actual generated flag values from the corresponding private stage files, rather than entering the example formats. S03 uses the derived token documented in its player brief and private answer manifest. Our `ctfd-apply-challenges.py` is a reference helper, **not a finished automatic importer**, so the admin-interface step remains necessary for a fresh deployment.
 
-### Main lab addresses
+After creating the challenges, confirm that all six appear on the CTFd Challenges page and that the correct flags are accepted.
 
-| Service | Address |
-|---|---|
-| CTFd | `https://10.13.10.20/` |
-| Gitea (S01) | `https://10.13.10.20/git/` |
-| Jenkins (S02) | `https://10.13.10.20/jenkins/` |
-| Flask challenge (S04–S05) | `http://10.13.10.30:5000/` |
-| PostgreSQL (S06) | `10.13.20.10:5432` — internal network only |
+## 7. How to access the CTF
 
-## 7. Test the full setup
+| Service | Lab URL or address | Usage |
+|---|---|---|
+| CTFd | `https://localhost/` or `https://10.13.10.20/` | Challenge portal and flag submission |
+| Gitea | `https://10.13.10.20/git/` | S01 Git investigation |
+| Jenkins | `https://10.13.10.20/jenkins/` | S02 pipeline investigation and S03 evidence |
+| Application | `http://10.13.10.30:5000/` | S04 and S05 target within the lab |
+| PostgreSQL | `10.13.20.10:5432` | S06 protected database, not directly exposed |
 
-Run the checks after seeding the services and finishing CTFd setup:
-
-```bash
-bash tests/stages/verify-clean-deploy.sh
-bash tests/stages/verify-phase14-ctfd.sh
-bash tests/stages/verify-end-to-end.sh
-bash tests/stages/verify-isolation-sweep.sh
-```
-
-For the participant view, enter the Kali container:
+To enter the participant container:
 
 ```bash
 docker compose exec kali bash
 ```
 
-Our network design uses `player_net` (`10.13.10.0/24`), `control_net` and `internal_net` (`10.13.20.0/24`). Kali should **not** reach PostgreSQL directly; the intended S06 path is through the application/SSH pivot. If external egress blocking is required by your lab checks, `scripts/enforce-application-egress-block.sh` configures host firewall rules and needs administrator access; review the rules before applying them.
+The Kali container provides the participant-side network view. The intended challenge environment should not be connected to public or university production networks.
 
-## 8. Normal operation, reset and evidence
+## 8. Checking whether the box works
 
-To stop and restart the containers **without deleting their volumes**:
+After the services are seeded and CTFd is configured, run our verification scripts:
+
+```bash
+bash tests/stages/verify-clean-deploy.sh
+bash tests/stages/verify-phase14-ctfd.sh
+bash tests/stages/verify-end-to-end.sh
+bash tests/stages/verify-bypass.sh
+bash tests/stages/verify-isolation-sweep.sh
+```
+
+Our submitted `evidence/test-results/` directory includes recorded results from our implementation. Examples include:
+
+| Evidence file | Result recorded in our lab |
+|---|---|
+| `phase17-clean-deploy.txt` | 30 checks passed |
+| `phase17-end-to-end.txt` | 10 checks passed |
+| `phase17-bypass.txt` | 13 checks passed |
+| `phase16-reproducibility.txt` | 15 checks passed |
+| `phase14-ctfd-verification.txt` | 15 checks passed |
+
+The end-to-end checks cover the Git-history clue, Jenkins artifact access, S03 evidence, low-privilege execution in S04, S05 local privilege boundary and the S06 network/database path. The bypass checks look for shortcuts such as direct database access and access to later-stage secrets before the intended stage is solved.
+
+These logs show the results from our recorded lab; the lecturer can rerun the checks on the deployed box.
+
+## 9. Normal stop, start and troubleshooting
+
+To stop containers without discarding named volumes:
 
 ```bash
 docker compose stop
-docker compose up -d --no-build
 ```
 
-After the full environment is verified, we can save a local baseline and record the build details:
+To start the same existing installation again:
 
 ```bash
-bash scripts/create_golden_seed.sh
-bash scripts/generate-build-manifest.sh
+docker compose up -d --no-build
+docker compose ps
 ```
 
-The baseline archive contains sensitive configuration and database data, so it must be stored privately. The stage reset command below **recreates challenge state**; run it only when a reset is intended:
+Useful checks if a service is not accessible:
+
+```bash
+docker compose ps
+docker compose logs --tail=80 nginx
+docker compose logs --tail=80 gitea
+docker compose logs --tail=80 jenkins
+sudo ss -tulpn | grep ':443'
+```
+
+If port 443 is already used by another local service, identify that service before restarting Nginx. If CTFd unexpectedly shows its setup page, check the MariaDB container and existing Docker volumes first; it can indicate that CTFd is using a new or empty database. If Nginx returns 502 after a backend restarts, check that backend's health and then try `docker compose restart nginx`.
+
+## 10. Reset and recovery
+
+We implemented two forms of recovery:
+
+**Individual/full challenge reset.** To return challenge state to the intended starting point, the repository includes `scripts/reset-s01.sh` through `scripts/reset-s06.sh` and the master script:
 
 ```bash
 bash scripts/reset-all.sh
 ```
 
-For Fast reset process:
+The master reset reinitializes the stages, resets Kali and runs stage verification. It intentionally recreates some Gitea, Jenkins and PostgreSQL challenge data. Use it when the current challenge progress is no longer needed.
+
+**Golden baseline recovery.** If the package includes `golden-seed.tar.gz`, it may contain a snapshot of Docker volumes and private configuration from our fully provisioned lab. It is intended for restoring a **matching** environment, using:
 
 ```bash
 bash scripts/fast_reset.sh
 ```
 
-Our test results and screenshots are organized under `evidence/test-results/`, `evidence/logs/` and `evidence/screenshots/`. We use these files to show the working challenges, network isolation and repeatable setup during the assignment demonstration.
+This command **replaces current lab volume contents with the saved snapshot**. It is not an ordinary restart. Use it only when the archive, `.env` settings, images and project configuration belong to the same baseline and there is no new work to preserve. For a newly built installation, configure and verify everything first; a new baseline can then be created using `bash scripts/create_golden_seed.sh` if that script is included.
 
-## Quick troubleshooting
+We keep recovery and repeatability evidence under `evidence/test-results/`, including multiple reset trials and post-reset end-to-end checks.
 
-- **Port 443 already in use:** check with `sudo ss -tulpn | grep ':443'` and identify the conflicting service.
-- **Missing environment variable:** check `.env` and rerun the relevant secret generator.
-- **Container not healthy:** use `docker compose ps` followed by `docker compose logs --tail=80 <service>`.
-- **CTFd shows the setup page again:** check the MariaDB container and the existing CTFd volumes before resetting anything.
-- **Gitea/Jenkins returns 502:** check their containers and restart Nginx with `docker compose restart nginx` if the backend was recreated.
+## 11. Source code and individual contribution evidence
 
-This project is an **intentionally vulnerable training environment**. We run it only on our isolated lab machine and do not expose the challenge services to the public internet.
+The submission includes the challenge implementation files, stage solver scripts, automation, Docker configuration and test evidence. The main solver locations are:
 
+```text
+challenges/s01-git-leak/solver/s01-solver.sh
+challenges/s02-pipeline-breach/solver/s02-solver.sh
+challenges/s03-ghost-dependency/solver/s03-solver.sh
+challenges/s04-poisoned-runtime/solver/s04-solver.py
+challenges/s05-broken-trust/solver/s05-solver.sh
+challenges/s06-behind-firewall/solver/s06-solver.sh
+```
 
+Additional proof-of-concept files are included under the challenge `poc/` directories. The `tests/` scripts and `evidence/` outputs document our integration testing, security validation, isolation checks and reset trials. Our Git commit history and the repository link, once added, provide additional contribution evidence.
+
+## 12. Safety and references
+
+This box is built for authorized learning and marking purposes only. Its intentionally vulnerable features, lab flags and seeded credentials should be used **only within the isolated project environment**. We do not use real user credentials or target external systems. The group acknowledges the third-party tools and container images used in the implementation, including Docker, Nginx, CTFd, Gitea, Jenkins, Flask, PostgreSQL, MariaDB, Redis and Kali Linux. The exact configured image references are in `compose.yml`, `.env.example`, and the relevant Dockerfiles. Our main upstream references are:
+
+- [Docker / Docker Compose](https://docs.docker.com/)
+- [CTFd](https://docs.ctfd.io/)
+- [Gitea](https://docs.gitea.com/)
+- [Jenkins](https://www.jenkins.io/doc/)
+- [Nginx](https://nginx.org/en/docs/)
+- [Flask](https://flask.palletsprojects.com/)
+- [PostgreSQL](https://www.postgresql.org/docs/)
+- [MariaDB](https://mariadb.com/docs/)
+- [Redis](https://redis.io/docs/latest/)
+- [Kali Linux](https://www.kali.org/docs/)
+
+The submitted demonstration video shows our running implementation. This README is intended to help the lecturer reproduce and inspect the CTF using the source files.
